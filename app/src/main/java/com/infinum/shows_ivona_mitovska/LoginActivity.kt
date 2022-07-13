@@ -25,9 +25,9 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun listenOnLogin() {
-        binding.LoginButton.setOnClickListener {
+        binding.loginButton.setOnClickListener {
 
-            val email = binding.EmailEdittext.text
+            val email = binding.emailEditText.text
             val split = email?.split("@")?.toTypedArray()
             val intent = Intent("com.infinum.shows.action")
             intent.putExtra(Intent.EXTRA_TEXT, split?.get(0))
@@ -37,57 +37,68 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun validEmailListener() {
-        binding.EmailEdittext.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun afterTextChanged(p0: Editable?) {}
+        binding.emailEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                text: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                validEmail(p0.toString())
+            override fun afterTextChanged(text: Editable?) {}
+
+            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+                validEmail(text.toString())
                 checkValidity()
             }
         })
     }
 
     private fun validPasswordListener() {
-        binding.PasswordEdittext.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun afterTextChanged(p0: Editable?) {}
+        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                text: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                validPassword(p0.toString())
+            override fun afterTextChanged(text: Editable?) {}
+
+            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+                validPassword(text.toString())
                 checkValidity()
             }
         })
     }
 
-    fun checkValidity() {
-        binding.LoginButton.isEnabled = loginValidity.isLoginValid()
+    private fun checkValidity() {
+        binding.loginButton.isEnabled = loginValidity.isLoginValid()
     }
 
     private fun validEmail(email: String) {
-//
-        if(!email.matches("^.{1,}".toRegex())){
-            binding.EmailLayout.error = "Email must contain at least 1 character"
-            loginValidity.setEmailValidity(false)
-        }
 
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.EmailLayout.error = "Invalid Email Address"
+        if (!email.matches(Constants.MINONEC.toRegex())) {
+            binding.emailLayout.error = "Email must contain at least 1 character"
+            loginValidity.setEmailValidity(false)
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.emailLayout.error = "Invalid Email Address"
             loginValidity.setEmailValidity(false)
         } else {
-            binding.EmailLayout.error = null
+            binding.emailLayout.error = null
             loginValidity.setEmailValidity(true)
         }
     }
 
     private fun validPassword(password: String) {
 
-        if(!password.matches("^.{6,}".toRegex())){
-            binding.PasswordLayout.error = "Password must contain at least 6 character"
+        if (!password.matches(Constants.MINSIXC.toRegex())) {
+            binding.passwordLayout.error = "Password must contain at least 6 character"
             loginValidity.setPasswordValidity(false)
-        }
-        else {
-            binding.PasswordLayout.error = null
+        } else {
+            binding.passwordLayout.error = null
             loginValidity.setPasswordValidity(true)
         }
     }
