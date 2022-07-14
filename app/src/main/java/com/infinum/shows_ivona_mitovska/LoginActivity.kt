@@ -78,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
         binding.loginButton.isEnabled = loginValidity.isLoginValid()
     }
 
+
     private fun validEmail(email: String) {
 
         if (!email.matches(Constants.MINONEC.toRegex())) {
@@ -93,7 +94,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun validPassword(password: String) {
-
         if (!password.matches(Constants.MINSIXC.toRegex())) {
             binding.passwordLayout.error = "Password must contain at least 6 character"
             loginValidity.setPasswordValidity(false)
@@ -102,4 +102,6 @@ class LoginActivity : AppCompatActivity() {
             loginValidity.setPasswordValidity(true)
         }
     }
+
+
 }
