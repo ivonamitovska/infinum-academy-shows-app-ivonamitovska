@@ -1,4 +1,4 @@
-package com.infinum.shows_ivona_mitovska
+package com.infinum.shows_ivona_mitovska.ui.login
 
 class LoginValidity(
     private var emailValidity: Boolean = false,

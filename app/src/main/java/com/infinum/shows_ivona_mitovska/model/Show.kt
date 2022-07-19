@@ -1,8 +1,10 @@
-package com.infinum.shows_ivona_mitovska
+package com.infinum.shows_ivona_mitovska.model
+
 import androidx.annotation.DrawableRes
 
 data class Show(
-    val name:String,
+    val id: Int,
+    val name: String,
     @DrawableRes val imageResId: Int,
-    val info:String
+    val info: String
 )

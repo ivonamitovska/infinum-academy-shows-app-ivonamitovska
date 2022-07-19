@@ -1,4 +1,4 @@
-package com.infinum.shows_ivona_mitovska
+package com.infinum.shows_ivona_mitovska.ui.login
 
 
 import android.content.Intent
@@ -8,6 +8,8 @@ import android.text.TextWatcher
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
 import com.infinum.shows_ivona_mitovska.databinding.ActivityLoginBinding
+import com.infinum.shows_ivona_mitovska.ui.shows.ShowsActivity
+import com.infinum.shows_ivona_mitovska.utils.Constants
 
 
 class LoginActivity : AppCompatActivity() {
@@ -26,11 +28,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun listenOnLogin() {
         binding.loginButton.setOnClickListener {
-
-
-            val intent = Intent(this,ShowsActivity::class.java)
+            val intent = Intent(this, ShowsActivity::class.java)
             startActivity(intent)
-
         }
     }
 
@@ -56,10 +55,7 @@ class LoginActivity : AppCompatActivity() {
     private fun validPasswordListener() {
         binding.passwordEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
-                text: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
+                text: CharSequence?, start: Int, count: Int, after: Int
             ) {
             }
 
@@ -76,9 +72,7 @@ class LoginActivity : AppCompatActivity() {
         binding.loginButton.isEnabled = loginValidity.isLoginValid()
     }
 
-
     private fun validEmail(email: String) {
-
         if (!email.matches(Constants.MINONEC.toRegex())) {
             binding.emailLayout.error = "Email must contain at least 1 character"
             loginValidity.setEmailValidity(false)
