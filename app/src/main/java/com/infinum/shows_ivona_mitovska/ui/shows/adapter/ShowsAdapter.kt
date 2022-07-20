@@ -12,7 +12,7 @@ class ShowsAdapter(
 ) : RecyclerView.Adapter<ShowsAdapter.ShowsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowsViewHolder {
-        val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context))
+        val binding =ItemShowBinding.inflate(LayoutInflater.from(parent.context))
         return ShowsViewHolder(binding)
     }
 

@@ -9,17 +9,19 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.ReviewRepository
 import com.infinum.shows_ivona_mitovska.ShowRepository
 import com.infinum.shows_ivona_mitovska.databinding.ActivityShowDetailsBinding
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
 import com.infinum.shows_ivona_mitovska.model.Review
-import com.infinum.shows_ivona_mitovska.ui.show_details.adapter.ShowsDetailsAdapter
+import com.infinum.shows_ivona_mitovska.ui.show_details.adapter.ReviewsAdapter
 import com.infinum.shows_ivona_mitovska.utils.Constants.SHOW_SELECTED_KEY
+import java.text.DecimalFormat
 
 class ShowDetailsActivity : AppCompatActivity() {
     lateinit var binding: ActivityShowDetailsBinding
-    private lateinit var reviewsAdapter: ShowsDetailsAdapter
+    private lateinit var reviewsAdapter: ReviewsAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShowDetailsBinding.inflate(layoutInflater)
@@ -31,16 +33,18 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.titleDetails)
+        setSupportActionBar(binding.toolbarTitle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
     }
 
     private fun showDetails() {
         val id = intent.extras?.getInt(SHOW_SELECTED_KEY)
-        binding.titleDetails.title = ShowRepository.getShowById(id!!)?.name
-        binding.imageDetails.setBackgroundResource(ShowRepository.getShowById(id)!!.imageResId)
-        binding.infoDetails.text = ShowRepository.getShowById(id)?.info
+        val show = ShowRepository.getShowById(id!!)
+        binding.toolbarTitle.title = show?.name
+        binding.imageDetails.setImageResource(show!!.imageResId)
+        binding.imageDetails.clipToOutline = true
+        binding.infoDetails.text = show.info
     }
 
     private fun writeCommentButton() {
@@ -53,8 +57,9 @@ class ShowDetailsActivity : AppCompatActivity() {
     private fun updateRating() {
         val reviewCount = reviewsAdapter.itemCount
         val average = reviewsAdapter.getAverageReview()
-        val averageFormatted = average.toString().format("%.2f")
-        binding.averageStars.text = "$reviewCount reviews,average $averageFormatted"
+        val df = DecimalFormat("#.##")
+        val averageFormatted = df.format(average)
+        binding.averageStars.text = "$reviewCount reviews, average $averageFormatted"
         binding.ratingBar.rating = average.toFloat()
     }
 
@@ -70,7 +75,7 @@ class ShowDetailsActivity : AppCompatActivity() {
                 )
                 dialog.dismiss()
             } else {
-                Toast.makeText(this@ShowDetailsActivity, "Please insert rating", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@ShowDetailsActivity, resources.getString(R.string.insert_rating), Toast.LENGTH_LONG).show()
             }
         }
         bottomSheetBinding.closeDialogButton.setOnClickListener {
@@ -94,7 +99,7 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun initReviewRecycler() {
-        reviewsAdapter = ShowsDetailsAdapter(ReviewRepository.getReviews())
+        reviewsAdapter = ReviewsAdapter(ReviewRepository.getReviews())
         binding.reviewRecycler.apply {
             layoutManager = LinearLayoutManager(this@ShowDetailsActivity, VERTICAL, false)
             addItemDecoration(DividerItemDecoration(this@ShowDetailsActivity, VERTICAL))

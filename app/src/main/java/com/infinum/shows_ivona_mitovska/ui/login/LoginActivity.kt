@@ -1,16 +1,13 @@
 package com.infinum.shows_ivona_mitovska.ui.login
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.infinum.shows_ivona_mitovska.databinding.ActivityLoginBinding
 import com.infinum.shows_ivona_mitovska.ui.shows.ShowsActivity
 import com.infinum.shows_ivona_mitovska.utils.Constants
-
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -25,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
         validPasswordListener()
     }
 
-
     private fun listenOnLogin() {
         binding.loginButton.setOnClickListener {
             val intent = Intent(this, ShowsActivity::class.java)
@@ -34,38 +30,26 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun validEmailListener() {
-        binding.emailEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                text: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
+        binding.emailEditText.doOnTextChanged { text: CharSequence?,
+                                                start: Int,
+                                                count: Int,
+                                                after: Int ->
+            validEmail(text.toString())
+            checkValidity()
 
-            override fun afterTextChanged(text: Editable?) {}
+        }
 
-            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-                validEmail(text.toString())
-                checkValidity()
-            }
-        })
     }
 
     private fun validPasswordListener() {
-        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                text: CharSequence?, start: Int, count: Int, after: Int
-            ) {
-            }
+        binding.passwordEditText.doOnTextChanged { text: CharSequence?,
+                                                   start: Int,
+                                                   count: Int,
+                                                   after: Int ->
 
-            override fun afterTextChanged(text: Editable?) {}
-
-            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-                validPassword(text.toString())
-                checkValidity()
-            }
-        })
+            validPassword(text.toString())
+            checkValidity()
+        }
     }
 
     private fun checkValidity() {

@@ -24,13 +24,11 @@ class ShowsActivity : AppCompatActivity() {
         initShowsRecycler()
         binding.buttonEmpty.setOnClickListener {
             if (binding.emptyText.isVisible) {
-                binding.emptyText.isVisible = false
-                binding.emptyImage.isVisible = false
+                binding.groupId.isVisible = false
                 binding.showsRecycler.isVisible = true
                 binding.buttonEmpty.text = getString(R.string.empty_list_text)
             } else {
-                binding.emptyText.isVisible = true
-                binding.emptyImage.isVisible = true
+                binding.groupId.isVisible = true
                 binding.showsRecycler.isVisible = false
                 binding.buttonEmpty.text = getString(R.string.show_list_text)
             }
