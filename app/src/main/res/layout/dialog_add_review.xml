@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_style"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/titleOfDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/write_review"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <RatingBar
+        android:id="@+id/reviewRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:progressTint="@color/my_second_purple"
+        android:stepSize="1"
+        android:theme="@style/RatingBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleOfDialog"
+        tools:min="1"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/commentLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:hint="@string/comment"
+        android:textColorHint="@color/my_purple"
+        android:theme="@style/TextInputLayoutStyle2"
+        app:boxStrokeColor="@color/my_purple"
+        app:hintTextColor="@color/my_purple"
+        app:layout_constraintTop_toBottomOf="@id/reviewRatingBar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/commentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textColor="@color/black"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/submitReviewButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/buttons_style"
+        android:text="@string/submit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/commentLayout"/>
+
+    <ImageButton
+        android:id="@+id/closeDialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/close_review_button"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

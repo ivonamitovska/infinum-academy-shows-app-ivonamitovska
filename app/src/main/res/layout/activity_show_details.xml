@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.show_details.ShowDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbarTitle"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:title="Title"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_sheet"
+        android:layout_below="@+id/actionBar"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/severance"
+                android:adjustViewBounds="true"
+                android:clipToOutline="true"
+                android:background="@drawable/rounded_image_view"/>
+
+            <TextView
+                android:id="@+id/infoDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/reviewsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/reviews"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/averageStars"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"
+                tools:text="3 reviews, 3.67 average"/>
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"
+                android:isIndicator="true"
+                android:backgroundTint="@color/my_purple"
+                android:theme="@style/RatingBar"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviewRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                tools:listitem="@layout/item_review"/>
+
+            <TextView
+                android:id="@+id/emptyRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:text="@string/no_reviews_yet"
+                android:textSize="15sp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/writeReviewButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="15dp"
+            android:background="@drawable/buttons_style"
+            android:text="@string/write_a_review"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
+    </FrameLayout>
+</RelativeLayout>
+
+
+

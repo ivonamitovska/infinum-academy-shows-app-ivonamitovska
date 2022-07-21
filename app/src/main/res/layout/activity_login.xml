@@ -6,36 +6,34 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/my_purple"
-        tools:context=".LoginActivity">
-
+        tools:context=".ui.login.LoginActivity">
 
         <ImageView
             android:id="@+id/topLeftImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/top_left_image_design"
             android:adjustViewBounds="true"
             android:src="@drawable/topleft"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <ImageView
             android:id="@+id/topRightImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/top_right_image_design"
             android:src="@drawable/topright"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <ImageView
+            android:contentDescription="@string/shows_logo_image"
             android:id="@+id/triangle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,10 +43,7 @@
             android:src="@drawable/triangle"
             app:layout_constraintEnd_toEndOf="@id/topLeftImageView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topLeftImageView"
-
-
-            />
+            app:layout_constraintTop_toBottomOf="@id/topLeftImageView"/>
 
         <TextView
             android:id="@+id/title"
@@ -57,18 +52,13 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="85dp"
             android:fontFamily="sans-serif"
-
-            android:text="Shows"
+            android:text="@string/shows"
             android:textColor="@color/white"
             android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toRightOf="@id/triangle"
             app:layout_constraintStart_toEndOf="@id/triangle"
-            app:layout_constraintTop_toBottomOf="@id/topLeftImageView"
-
-
-            />
-
+            app:layout_constraintTop_toBottomOf="@id/topLeftImageView"/>
 
         <TextView
             android:id="@+id/login"
@@ -76,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="150dp"
-            android:text="Login"
+            android:text="@string/login"
             android:textColor="@color/white"
             android:textSize="35sp"
             android:textStyle="bold"
@@ -88,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="In order to continue please log in"
+            android:text="@string/in_order_to_continue_please_log_in"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@id/login"
@@ -101,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="26dp"
-            android:hint="Email"
+            android:hint="@string/email"
             android:textColorHint="@color/white"
             android:theme="@style/TextInputLayoutStyle"
             app:boxStrokeColor="@color/white"
@@ -129,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
-            android:hint="Password"
+            android:hint="@string/hint_password"
             android:textColorHint="@color/white"
             android:theme="@style/TextInputLayoutStyle"
             app:boxStrokeColor="@color/white"
@@ -159,7 +149,7 @@
             android:layout_marginTop="135dp"
             android:background="@drawable/round_style"
             android:enabled="false"
-            android:text="Login"
+            android:text="@string/login"
             android:textAllCaps="false"
 
             app:layout_constraintEnd_toEndOf="parent"
