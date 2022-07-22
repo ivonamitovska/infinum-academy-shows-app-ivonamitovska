@@ -1,31 +1,42 @@
-package com.infinum.shows_ivona_mitovska.ui.login
+package com.infinum.shows_ivona_mitovska.ui.login.model
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import com.infinum.shows_ivona_mitovska.databinding.ActivityLoginBinding
-import com.infinum.shows_ivona_mitovska.ui.shows.ShowsActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.infinum.shows_ivona_mitovska.R
+import com.infinum.shows_ivona_mitovska.databinding.FragmentLoginBinding
+import com.infinum.shows_ivona_mitovska.ui.login.LoginValidity
 import com.infinum.shows_ivona_mitovska.utils.Constants
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginFragment : Fragment() {
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
     private val loginValidity = LoginValidity()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.getRoot()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         listenOnLogin()
         validEmailListener()
         validPasswordListener()
     }
 
     private fun listenOnLogin() {
+
         binding.loginButton.setOnClickListener {
-            val intent = Intent(this, ShowsActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.toShowsFragment)
         }
     }
 
@@ -77,6 +88,11 @@ class LoginActivity : AppCompatActivity() {
             binding.passwordLayout.error = null
             loginValidity.setPasswordValidity(true)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

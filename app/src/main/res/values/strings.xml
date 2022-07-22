@@ -23,7 +23,7 @@
     <string name="show_list_text">Shows List</string>
     <string name="empty_state_image">Empty State Image</string>
     <string name="close_review_button">Close Review Button</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="insert_rating">Please insert rating</string>
+    <string name="log_out_button">Log out button</string>
 </resources>

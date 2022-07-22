@@ -1,46 +1,53 @@
-package com.infinum.shows_ivona_mitovska.ui.show_details
+package com.infinum.shows_ivona_mitovska.ui.show_details.model
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.ReviewRepository
 import com.infinum.shows_ivona_mitovska.ShowRepository
-import com.infinum.shows_ivona_mitovska.databinding.ActivityShowDetailsBinding
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
+import com.infinum.shows_ivona_mitovska.databinding.FragmentShowDetailsBinding
 import com.infinum.shows_ivona_mitovska.model.Review
 import com.infinum.shows_ivona_mitovska.ui.show_details.adapter.ReviewsAdapter
-import com.infinum.shows_ivona_mitovska.utils.Constants.SHOW_SELECTED_KEY
 import java.text.DecimalFormat
 
-class ShowDetailsActivity : AppCompatActivity() {
-    lateinit var binding: ActivityShowDetailsBinding
+class ShowDetailsFragment : Fragment() {
+    private var _binding: FragmentShowDetailsBinding? = null
+    private val binding get() = _binding!!
     private lateinit var reviewsAdapter: ReviewsAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityShowDetailsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private val args: ShowDetailsFragmentArgs by navArgs()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        _binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
+        return binding.getRoot()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         showDetails()
         writeCommentButton()
         initReviewRecycler()
-        setupToolbar()
-    }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbarTitle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
     }
 
     private fun showDetails() {
-        val id = intent.extras?.getInt(SHOW_SELECTED_KEY)
-        val show = ShowRepository.getShowById(id!!)
+        val showId = args.showId
+        val show = ShowRepository.getShowById(showId)
         binding.toolbarTitle.title = show?.name
         binding.imageDetails.setImageResource(show!!.imageResId)
         binding.imageDetails.clipToOutline = true
@@ -64,7 +71,7 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun showDetailsReviewDialog() {
-        val dialog = BottomSheetDialog(this)
+        val dialog = BottomSheetDialog(this.requireContext())
         val bottomSheetBinding = DialogAddReviewBinding.inflate(layoutInflater)
         dialog.setContentView(bottomSheetBinding.root)
         bottomSheetBinding.submitReviewButton.setOnClickListener {
@@ -75,7 +82,9 @@ class ShowDetailsActivity : AppCompatActivity() {
                 )
                 dialog.dismiss()
             } else {
-                Toast.makeText(this@ShowDetailsActivity, resources.getString(R.string.insert_rating), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, resources.getString(R.string.insert_rating), Toast.LENGTH_LONG).show()
+
+
             }
         }
         bottomSheetBinding.closeDialogButton.setOnClickListener {
@@ -101,14 +110,16 @@ class ShowDetailsActivity : AppCompatActivity() {
     private fun initReviewRecycler() {
         reviewsAdapter = ReviewsAdapter(ReviewRepository.getReviews())
         binding.reviewRecycler.apply {
-            layoutManager = LinearLayoutManager(this@ShowDetailsActivity, VERTICAL, false)
-            addItemDecoration(DividerItemDecoration(this@ShowDetailsActivity, VERTICAL))
+            layoutManager = LinearLayoutManager(this@ShowDetailsFragment.context, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(this@ShowDetailsFragment.context, LinearLayoutManager.VERTICAL))
             adapter = reviewsAdapter
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
+
+
 }
