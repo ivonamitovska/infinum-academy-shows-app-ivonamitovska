@@ -1,5 +1,6 @@
 package com.infinum.shows_ivona_mitovska.ui.show_details.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,15 +25,12 @@ class ReviewsAdapter(
 
     override fun getItemCount() = reviews.count()
 
-    fun addReview(review: Review) {
-        reviews = reviews + review
-        notifyItemInserted(reviews.size)
-    }
-
-    fun getAverageReview(): Double {
-        var average = 0.0
-        reviews.forEach { average += it.review }
-        return average / reviews.size
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(shows: List<Review>?) {
+        if (shows != null) {
+            reviews = shows
+            notifyDataSetChanged()
+        }
     }
 
     inner class ReviewsViewHolder(private val binding: ItemReviewBinding) :
@@ -47,9 +45,7 @@ class ReviewsAdapter(
                 }
                 numOfStarsComment.text = review.review.toString()
             }
-
         }
-
     }
 
 }

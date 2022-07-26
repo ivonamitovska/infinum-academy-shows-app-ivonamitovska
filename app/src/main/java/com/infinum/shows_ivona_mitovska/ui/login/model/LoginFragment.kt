@@ -1,5 +1,6 @@
 package com.infinum.shows_ivona_mitovska.ui.login.model
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.FragmentLoginBinding
+import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.login.LoginValidity
 import com.infinum.shows_ivona_mitovska.utils.Constants
 
@@ -17,13 +19,19 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val loginValidity = LoginValidity()
+    private lateinit var prefs: ShowPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        prefs = ShowPreferences(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.getRoot()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,31 +41,32 @@ class LoginFragment : Fragment() {
         validPasswordListener()
     }
 
-    private fun listenOnLogin() {
+    override fun onResume() {
+        super.onResume()
+        binding.passwordEditText.text?.clear()
+    }
 
+    private fun listenOnLogin() {
+        val email = binding.emailEditText.text
         binding.loginButton.setOnClickListener {
-            findNavController().navigate(R.id.toShowsFragment)
+            if (binding.rememberMeCheckBox.isChecked) {
+                prefs.saveString(Constants.USERNAME, email.toString())
+            }
+            val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
+            prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
+            findNavController().navigate(LoginFragmentDirections.toShowsFragment(email.toString()))
         }
     }
 
     private fun validEmailListener() {
-        binding.emailEditText.doOnTextChanged { text: CharSequence?,
-                                                start: Int,
-                                                count: Int,
-                                                after: Int ->
+        binding.emailEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
             validEmail(text.toString())
             checkValidity()
-
         }
-
     }
 
     private fun validPasswordListener() {
-        binding.passwordEditText.doOnTextChanged { text: CharSequence?,
-                                                   start: Int,
-                                                   count: Int,
-                                                   after: Int ->
-
+        binding.passwordEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
             validPassword(text.toString())
             checkValidity()
         }

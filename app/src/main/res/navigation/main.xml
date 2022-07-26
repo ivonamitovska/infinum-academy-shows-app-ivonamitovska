@@ -8,24 +8,27 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action android:id="@+id/toShowsFragment" app:destination="@id/showsFragment" app:enterAnim="@anim/enter_animation"
-            app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation" app:popExitAnim="@anim/pop_exit_animation"/>
+            app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation"
+            app:popExitAnim="@anim/pop_exit_animation">
+            <argument android:name="username" app:argType="string"/>
+        </action>
     </fragment>
-    <fragment android:id="@+id/showsFragment" android:name="com.infinum.shows_ivona_mitovska.ui.shows.model.ShowsFragment"
+    <fragment android:id="@+id/showsFragment"
+        android:name="com.infinum.shows_ivona_mitovska.ui.shows.model.ShowsFragment"
         android:label="fragment_shows"
         tools:layout="@layout/fragment_shows">
         <action android:id="@+id/toShowDetailsFragment" app:destination="@id/showDetailsFragment" app:enterAnim="@anim/enter_animation"
             app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation" app:popExitAnim="@anim/pop_exit_animation">
-            <argument
-                android:name="showId"
-                app:argType="integer"/>
+            <argument android:name="selectedShow" app:argType="com.infinum.shows_ivona_mitovska.model.Show"/>
+            <argument android:name="username" app:argType="string"/>
         </action>
-        <action android:id="@+id/toLogInFragment" app:destination="@id/loginFragment" app:enterAnim="@anim/enter_animation"
-            app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation" app:popExitAnim="@anim/pop_exit_animation"/>
+        <argument android:name="username" app:argType="string"/>
     </fragment>
     <fragment android:id="@+id/showDetailsFragment"
         android:name="com.infinum.shows_ivona_mitovska.ui.show_details.model.ShowDetailsFragment"
         android:label="fragment_show_details"
         tools:layout="@layout/fragment_show_details">
-        <argument android:name="showId" app:argType="integer"/>
+        <argument android:name="selectedShow" app:argType="com.infinum.shows_ivona_mitovska.model.Show"/>
+        <argument android:name="username" app:argType="string"/>
     </fragment>
 </navigation>

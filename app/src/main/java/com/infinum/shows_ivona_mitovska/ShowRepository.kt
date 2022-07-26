@@ -54,7 +54,5 @@ object ShowRepository {
             )
     )
 
-    fun getShowById(id: Int) = getShows().find { item -> item.id == id }
-
 
 }
