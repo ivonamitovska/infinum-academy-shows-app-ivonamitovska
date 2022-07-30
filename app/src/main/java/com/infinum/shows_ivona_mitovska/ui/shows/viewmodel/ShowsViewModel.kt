@@ -3,17 +3,38 @@ package com.infinum.shows_ivona_mitovska.ui.shows.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.infinum.shows_ivona_mitovska.ShowRepository
+import com.infinum.shows_ivona_mitovska.data.response.ShowsResponse
+import com.infinum.shows_ivona_mitovska.data.response.generic.GenericResponse
+import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.model.Show
+import com.infinum.shows_ivona_mitovska.model.Token
+import com.infinum.shows_ivona_mitovska.networking.ApiModule
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ShowsViewModel : ViewModel() {
 
-    private val _showList = MutableLiveData<List<Show>>()
-    val showList: LiveData<List<Show>>
+    private val _showList = MutableLiveData<GenericResponse<List<Show>?>>()
+    val showList: LiveData<GenericResponse<List<Show>?>>
         get() = _showList
 
-    init {
-        _showList.value = ShowRepository.getShows()
+    fun initShows(token: Token) {
+        ApiModule.retrofit.getShows(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
+            .enqueue(object : Callback<ShowsResponse> {
+                override fun onResponse(call: Call<ShowsResponse>, response: Response<ShowsResponse>) {
+                    if (response.code() == 200) {
+                        _showList.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
+                    } else {
+                        _showList.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    }
+                }
+
+                override fun onFailure(call: Call<ShowsResponse>, t: Throwable) {
+                    _showList.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                }
+
+            })
     }
 
 

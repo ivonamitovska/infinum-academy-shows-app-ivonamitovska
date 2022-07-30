@@ -14,13 +14,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
+import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
+import com.infinum.shows_ivona_mitovska.networking.ApiModule
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.shows.adapter.ShowsAdapter
 import com.infinum.shows_ivona_mitovska.ui.shows.viewmodel.ShowsViewModel
@@ -30,7 +31,6 @@ class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
     private val binding get() = _binding!!
     private lateinit var showsAdapter: ShowsAdapter
-    private val args: ShowsFragmentArgs by navArgs()
     private val viewModel by viewModels<ShowsViewModel>()
     private lateinit var prefs: ShowPreferences
     private val cameraPhotoLauncher = initCameraLauncher()
@@ -39,6 +39,7 @@ class ShowsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        ApiModule.initRetrofit()
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -55,8 +56,22 @@ class ShowsFragment : Fragment() {
             binding.showsRecycler.isVisible = isVisible
             binding.buttonEmpty.text = if (isVisible) getString(R.string.empty_list_text) else getString(R.string.show_list_text)
         }
-        viewModel.showList.observe(viewLifecycleOwner) { showList ->
-            showsAdapter.updateData(showList)
+        viewModel.showList.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                showsAdapter.updateData(response.data)
+            } else {
+                //TODO DISPLAY ERROR MESSAGE
+            }
+        }
+        getShows()
+    }
+
+    fun getShows() {
+        val token = prefs.getToken()
+        if (token != null) {
+            viewModel.initShows(token)
+        } else {
+            //TODO NAVIGATE TO LOGIN
         }
     }
 
@@ -84,7 +99,7 @@ class ShowsFragment : Fragment() {
         val dialog = BottomSheetDialog(this.requireContext())
         val bottomSheetBinding = DialogInfoProfileBinding.inflate(layoutInflater)
         dialog.setContentView(bottomSheetBinding.root)
-        bottomSheetBinding.emailDialog.text = args.username
+        bottomSheetBinding.emailDialog.text = prefs.getToken()!!.uid
         bottomSheetBinding.profilePhotoDialog.setImageBitmap(prefs.getImageFromPrefs(Constants.USER_IMAGE))
         bottomSheetBinding.logOutButton.setOnClickListener {
             showLogOutDialog(requireContext()) { dialog, id ->
@@ -108,8 +123,7 @@ class ShowsFragment : Fragment() {
 
     private fun initShowsRecycler() {
         showsAdapter = ShowsAdapter(listOf()) { show ->
-            val email = args.username
-            findNavController().navigate(ShowsFragmentDirections.toShowDetailsFragment(show, email))
+            findNavController().navigate(ShowsFragmentDirections.toShowDetailsFragment(show))
         }
         binding.showsRecycler.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.infinum.shows_ivona_mitovska.databinding.ItemShowBinding
 import com.infinum.shows_ivona_mitovska.model.Show
 
@@ -34,9 +35,11 @@ class ShowsAdapter(
     inner class ShowsViewHolder(private val binding: ItemShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Show) {
-            binding.showName.text = item.name
-            binding.showImage.setImageResource(item.imageResId)
-            binding.showInfo.text = item.info
+            binding.showName.text = item.title
+            Glide.with(this.itemView)
+                .load(item.imageUrl)
+                .into(binding.showImage)
+            binding.showInfo.text = item.description
             binding.cardShow.setOnClickListener {
                 onItemClickCallback(item)
             }

@@ -12,11 +12,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.ReviewRepository
+import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowDetailsBinding
+import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.show_details.adapter.ReviewsAdapter
 import com.infinum.shows_ivona_mitovska.ui.show_details.viewmodel.ShowDetailsViewModel
 
@@ -25,6 +28,7 @@ class ShowDetailsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var reviewsAdapter: ReviewsAdapter
     private val args: ShowDetailsFragmentArgs by navArgs()
+    private lateinit var prefs: ShowPreferences
     private val viewModel by viewModels<ShowDetailsViewModel>()
 
     override fun onCreateView(
@@ -37,33 +41,42 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        prefs = ShowPreferences(requireContext())
         binding.toolbar.apply {
             setNavigationIcon(R.drawable.back_arrow)
             setNavigationOnClickListener { view ->
                 requireActivity().onBackPressed()
             }
         }
-
         writeCommentButton()
         initReviewRecycler()
         observeShow()
         observeReviews()
-        viewModel.initShow(args.selectedShow)
+        viewModel.initShow(args.selectedShow.id, prefs.getToken()!!)
+        viewModel.initReviews(args.selectedShow.id, prefs.getToken()!!)
     }
 
     private fun observeReviews() {
-        viewModel.reviews.observe(viewLifecycleOwner) { reviews ->
-            reviewsAdapter.updateData(reviews)
-            updateRating(reviews.size.toString(), viewModel.getAverageReviewRating())
+        viewModel.reviews.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                reviewsAdapter.updateData(response.data)
+                updateRating(response.data!!.size.toString(), viewModel.getAverageReviewRating())
+            } else {
+                //TODO DISPLAY ERROR
+            }
         }
     }
 
     private fun observeShow() {
-        viewModel.show.observe(viewLifecycleOwner) { show ->
-            binding.toolbar.title = show.name
-            binding.imageDetails.setImageResource(show.imageResId)
-            binding.imageDetails.clipToOutline = true
-            binding.infoDetails.text = show.info
+        viewModel.show.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                binding.toolbar.title = response.data!!.title
+                Glide.with(requireContext()).load(response.data.imageUrl).into(binding.imageDetails)
+                binding.imageDetails.clipToOutline = true
+                binding.infoDetails.text = response.data.description
+            } else {
+                //TODO DISPLAY ERROR
+            }
         }
     }
 
@@ -90,11 +103,12 @@ class ShowDetailsFragment : Fragment() {
         dialog.setContentView(bottomSheetBinding.root)
         bottomSheetBinding.submitReviewButton.setOnClickListener {
             if (bottomSheetBinding.reviewRatingBar.rating != 0f) {
-                val email = args.username
-                val username = email.split("@")
+                val showId = args.selectedShow
                 viewModel.addReview(
-                    bottomSheetBinding.commentEditText.text.toString(), username[0],
-                    bottomSheetBinding.reviewRatingBar.rating.toInt()
+                    bottomSheetBinding.commentEditText.text.toString(),
+                    bottomSheetBinding.reviewRatingBar.rating.toInt(),
+                    showId.id.toInt(),
+                    prefs.getToken()!!
                 )
                 dialog.dismiss()
             } else {

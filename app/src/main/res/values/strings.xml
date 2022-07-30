@@ -33,4 +33,6 @@
     <string name="no">NO</string>
     <string name="do_you_want_to_log_out">Do you want to log out?</string>
     <string name="profile_photo">Profile Photo</string>
+    <string name="register">Register</string>
+    <string name="repeat_password">Repeat password</string>
 </resources>

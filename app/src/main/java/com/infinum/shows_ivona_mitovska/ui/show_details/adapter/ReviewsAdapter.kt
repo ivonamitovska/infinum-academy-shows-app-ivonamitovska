@@ -38,12 +38,12 @@ class ReviewsAdapter(
         fun bind(review: Review) {
             binding.apply {
                 placeholderView.setImageResource(R.drawable.placeholder)
-                nameReview.text = review.name
+                nameReview.text = review.user.email
                 if (review.comment.isNotEmpty()) {
                     commentReview.visibility = View.VISIBLE
                     commentReview.text = review.comment
                 }
-                numOfStarsComment.text = review.review.toString()
+                numOfStarsComment.text = review.rating.toString()
             }
         }
     }

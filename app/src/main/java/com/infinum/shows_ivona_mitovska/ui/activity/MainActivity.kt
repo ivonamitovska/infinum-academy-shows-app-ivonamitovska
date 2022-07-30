@@ -2,7 +2,6 @@ package com.infinum.shows_ivona_mitovska.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.ActivityMainBinding
@@ -22,11 +21,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkRemembered() {
         val navController = (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment).navController
-        val username = prefs.getString(Constants.USERNAME)
-        if (!username.isNullOrEmpty()) {
-            val bundle: Bundle = bundleOf()
-            bundle.putString("username", username)
-            navController.navigate(R.id.showsFragment, bundle)
+        val rememberMe = prefs.getBoolean(Constants.REMEMBER_ME)
+        if (rememberMe) {
+            navController.navigate(R.id.showsFragment)
         }
     }
 
