@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.infinum.shows_ivona_mitovska.data.response.ShowsResponse
+import com.infinum.shows_ivona_mitovska.data.response.TopRatedResponse
 import com.infinum.shows_ivona_mitovska.data.response.generic.GenericResponse
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.model.Show
@@ -31,6 +32,25 @@ class ShowsViewModel : ViewModel() {
                 }
 
                 override fun onFailure(call: Call<ShowsResponse>, t: Throwable) {
+                    _showList.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                }
+
+            })
+    }
+
+    fun topRated(token: Token){
+        ApiModule.retrofit.getTopRated(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
+            .enqueue(object : Callback<TopRatedResponse> {
+                override fun onResponse(call: Call<TopRatedResponse>, response: Response<TopRatedResponse>) {
+                    if (response.code() == 200) {
+                        _showList.value = GenericResponse(response.body()!!.shows,null,ResponseStatus.SUCCESS)
+                    } else {
+                        _showList.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    }
+                }
+
+                override fun onFailure(call: Call<TopRatedResponse>, t: Throwable) {
+
                     _showList.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
                 }
 

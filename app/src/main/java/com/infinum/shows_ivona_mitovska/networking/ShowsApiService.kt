@@ -9,6 +9,7 @@ import com.infinum.shows_ivona_mitovska.data.response.LoginResponse
 import com.infinum.shows_ivona_mitovska.data.response.ReviewsListResponse
 import com.infinum.shows_ivona_mitovska.data.response.ShowDetailsResponse
 import com.infinum.shows_ivona_mitovska.data.response.ShowsResponse
+import com.infinum.shows_ivona_mitovska.data.response.TopRatedResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -64,4 +65,11 @@ interface ShowsApiService {
         @Header("expiry") expiry: String,
         @Header("uid") uid: String,
         @Path("show_id") showId: String): Call<ReviewsListResponse>
+
+    @GET("/shows/top_rated")
+    fun getTopRated(  @Header("access-token") accessToken: String,
+                      @Header("client") client: String,
+                      @Header("token-type") tokenType: String,
+                      @Header("expiry") expiry: String,
+                      @Header("uid") uid: String):Call<TopRatedResponse>
 }

@@ -61,17 +61,32 @@ class ShowsFragment : Fragment() {
                 showsAdapter.updateData(response.data)
             } else {
                 //TODO DISPLAY ERROR MESSAGE
+
             }
         }
         getShows()
+        onClickChip()
     }
 
-    fun getShows() {
+    private fun getShows() {
         val token = prefs.getToken()
         if (token != null) {
             viewModel.initShows(token)
         } else {
             //TODO NAVIGATE TO LOGIN
+        }
+    }
+
+    private fun onClickChip() {
+        binding.chip.setOnClickListener {
+            getTopRated()
+        }
+    }
+
+    private fun getTopRated() {
+        val token = prefs.getToken()
+        if (token != null) {
+            viewModel.topRated(token)
         }
     }
 
