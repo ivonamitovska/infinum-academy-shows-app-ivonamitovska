@@ -28,7 +28,13 @@ class RegisterViewModel : ViewModel() {
         ApiModule.retrofit.register(registerRequest)
             .enqueue(object : Callback<RegisterResponse> {
                 override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
-                    registrationResultLiveData.value = GenericResponse(response.isSuccessful, "", ResponseStatus.SUCCESS)
+                    if(response.code()==201){
+                        registrationResultLiveData.value = GenericResponse(response.isSuccessful, "", ResponseStatus.SUCCESS)
+                    }
+                    else{
+                        registrationResultLiveData.value = GenericResponse(false, "Email is not an email", ResponseStatus.FAILURE)
+                    }
+
                 }
 
                 override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {

@@ -38,7 +38,7 @@ class LoginViewModel : ViewModel() {
                         val token = Token(accessToken!!, client!!, tokenType!!, expiry!!, uid!!)
                         loginResultLiveData.value = GenericResponse(token, null, ResponseStatus.SUCCESS)
                     } else {
-                        loginResultLiveData.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                        loginResultLiveData.value = GenericResponse(null, "Invalid login credentials. Please try again.", ResponseStatus.FAILURE)
                     }
 
                 }

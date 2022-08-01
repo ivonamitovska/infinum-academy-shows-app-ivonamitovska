@@ -33,8 +33,11 @@ class ShowDetailsViewModel : ViewModel() {
                 override fun onResponse(call: Call<ReviewsListResponse>, response: Response<ReviewsListResponse>) {
                     if (response.code() == 200) {
                         _reviews.value = GenericResponse(response.body()!!.reviews, null, ResponseStatus.SUCCESS)
-                    } else {
-                        _reviews.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    } else if(response.code()==401){
+                        _reviews.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
+                    }
+                    else{
+                        _reviews.value = GenericResponse(null, "Couldn't find Show with $showId=bad_id", ResponseStatus.FAILURE)
                     }
                 }
 
@@ -51,8 +54,11 @@ class ShowDetailsViewModel : ViewModel() {
                 override fun onResponse(call: Call<ShowDetailsResponse>, response: Response<ShowDetailsResponse>) {
                     if (response.code() == 200) {
                         _show.value = GenericResponse(response.body()!!.show, null, ResponseStatus.SUCCESS)
-                    } else {
-                        _show.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    }else if(response.code()==401){
+                        _show.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
+                    }
+                    else{
+                        _show.value = GenericResponse(null, "Couldn't find Show with $id=bad_id", ResponseStatus.FAILURE)
                     }
                 }
 
@@ -76,8 +82,11 @@ class ShowDetailsViewModel : ViewModel() {
                         val list = _reviews.value?.data as MutableList
                         list.add(response.body()!!.review)
                         _reviews.value = GenericResponse(list, null, ResponseStatus.SUCCESS)
-                    } else {
-                        _reviews.value = GenericResponse(reviews.value?.data, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    } else if(response.code()==401) {
+                        _reviews.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
+                    }
+                    else{
+                        _reviews.value = GenericResponse(null, "Show must exist,Rating is not a number", ResponseStatus.FAILURE)
                     }
                 }
 

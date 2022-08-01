@@ -42,6 +42,7 @@ class ShowsFragment : Fragment() {
         ApiModule.initRetrofit()
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,12 +58,15 @@ class ShowsFragment : Fragment() {
             binding.buttonEmpty.text = if (isVisible) getString(R.string.empty_list_text) else getString(R.string.show_list_text)
         }
         viewModel.showList.observe(viewLifecycleOwner) { response ->
+
             if (response.responseStatus == ResponseStatus.SUCCESS) {
                 showsAdapter.updateData(response.data)
+
             } else {
                 //TODO DISPLAY ERROR MESSAGE
 
             }
+
         }
         getShows()
         onClickChip()
@@ -75,6 +79,8 @@ class ShowsFragment : Fragment() {
         } else {
             //TODO NAVIGATE TO LOGIN
         }
+
+
     }
 
     private fun onClickChip() {

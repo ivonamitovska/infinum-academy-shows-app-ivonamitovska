@@ -26,8 +26,8 @@ class ShowsViewModel : ViewModel() {
                 override fun onResponse(call: Call<ShowsResponse>, response: Response<ShowsResponse>) {
                     if (response.code() == 200) {
                         _showList.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
-                    } else {
-                        _showList.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                    }else {
+                        _showList.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
                     }
                 }
 
@@ -45,7 +45,7 @@ class ShowsViewModel : ViewModel() {
                     if (response.code() == 200) {
                         _showList.value = GenericResponse(response.body()!!.shows,null,ResponseStatus.SUCCESS)
                     } else {
-                        _showList.value = GenericResponse(null, "UNAUTHORIZED", ResponseStatus.FAILURE)
+                        _showList.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
                     }
                 }
 
