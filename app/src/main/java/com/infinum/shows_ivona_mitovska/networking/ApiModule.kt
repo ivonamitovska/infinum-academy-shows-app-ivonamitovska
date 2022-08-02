@@ -13,6 +13,10 @@ object ApiModule {
     private const val BASE_URL = "https://tv-shows.infinum.academy/"
     lateinit var retrofit: ShowsApiService
 
+    private val json: Json = Json {
+        ignoreUnknownKeys = true
+    }
+
     fun initRetrofit() {
         val okhttp = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -23,9 +27,7 @@ object ApiModule {
 
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json {
-                ignoreUnknownKeys = true
-            }.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(okhttp)
             .build()
             .create(ShowsApiService::class.java)

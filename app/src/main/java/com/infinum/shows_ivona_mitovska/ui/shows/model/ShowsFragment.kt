@@ -80,6 +80,7 @@ class ShowsFragment : Fragment() {
             Toast.makeText(activity, "You must log in!", Toast.LENGTH_LONG).show()
             findNavController().popBackStack()
         }
+
     }
 
     private fun initChipListener() {
@@ -123,9 +124,9 @@ class ShowsFragment : Fragment() {
         bottomSheetBinding.profilePhotoDialog.setImageBitmap(prefs.getImageFromPrefs(Constants.USER_IMAGE))
         bottomSheetBinding.logOutButton.setOnClickListener {
             showLogOutDialog(requireContext()) { dialog, id ->
+                findNavController().popBackStack()
                 prefs.removeString(REMEMBER_ME)
                 prefs.deleteToken()
-                findNavController().popBackStack()
                 dialog.cancel()
             }
             dialog.dismiss()

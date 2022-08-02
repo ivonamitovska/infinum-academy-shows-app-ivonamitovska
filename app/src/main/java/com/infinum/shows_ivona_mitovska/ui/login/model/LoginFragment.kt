@@ -35,7 +35,7 @@ class LoginFragment : Fragment() {
 
         setFragmentResultListener(REGISTER_FRAGMENT_RESULT_KEY) { _, bundle ->
             if (bundle.getBoolean(USER_REGISTRATION_STATUS)) {
-                binding.login.text = "Registration\nsuccessful!"
+                binding.login.text = getString(R.string.registration_successfull)
                 binding.registerLoginButton.isVisible = false
             }
         }

@@ -73,6 +73,7 @@ class ShowDetailsFragment : Fragment() {
             if (response.responseStatus == ResponseStatus.SUCCESS) {
                 binding.toolbar.title = response.data!!.title
                 Glide.with(requireContext()).load(response.data.imageUrl).into(binding.imageDetails)
+                binding.imageDetails.clipToOutline = true
                 binding.infoDetails.text = response.data.description
             } else {
                 //TODO DISPLAY ERROR
