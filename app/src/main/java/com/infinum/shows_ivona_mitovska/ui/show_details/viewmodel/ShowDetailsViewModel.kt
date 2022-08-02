@@ -31,18 +31,16 @@ class ShowDetailsViewModel : ViewModel() {
         ApiModule.retrofit.getReviews(token.accessToken, token.client, token.tokenType, token.expiry, token.uid, showId)
             .enqueue(object : Callback<ReviewsListResponse> {
                 override fun onResponse(call: Call<ReviewsListResponse>, response: Response<ReviewsListResponse>) {
-                    if (response.code() == 200) {
+                    if (response.isSuccessful) {
                         _reviews.value = GenericResponse(response.body()!!.reviews, null, ResponseStatus.SUCCESS)
-                    } else if(response.code()==401){
-                        _reviews.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
                     }
                     else{
-                        _reviews.value = GenericResponse(null, "Couldn't find Show with $showId=bad_id", ResponseStatus.FAILURE)
+                        _reviews.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
 
                 override fun onFailure(call: Call<ReviewsListResponse>, t: Throwable) {
-                    _reviews.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                    _reviews.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })
@@ -52,18 +50,16 @@ class ShowDetailsViewModel : ViewModel() {
         ApiModule.retrofit.getShowDetails(token.accessToken, token.client, token.tokenType, token.expiry, token.uid, id)
             .enqueue(object : Callback<ShowDetailsResponse> {
                 override fun onResponse(call: Call<ShowDetailsResponse>, response: Response<ShowDetailsResponse>) {
-                    if (response.code() == 200) {
+                    if (response.isSuccessful) {
                         _show.value = GenericResponse(response.body()!!.show, null, ResponseStatus.SUCCESS)
-                    }else if(response.code()==401){
-                        _show.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
                     }
                     else{
-                        _show.value = GenericResponse(null, "Couldn't find Show with $id=bad_id", ResponseStatus.FAILURE)
+                        _show.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
 
                 override fun onFailure(call: Call<ShowDetailsResponse>, t: Throwable) {
-                    _show.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                    _show.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })
@@ -78,20 +74,17 @@ class ShowDetailsViewModel : ViewModel() {
         ApiModule.retrofit.createReview(token.accessToken, token.client, token.tokenType, token.expiry, token.uid, reviewRequest)
             .enqueue(object : Callback<CreateReviewResponse> {
                 override fun onResponse(call: Call<CreateReviewResponse>, response: Response<CreateReviewResponse>) {
-                    if (response.code() == 201) {
+                    if (response.isSuccessful) {
                         val list = _reviews.value?.data as MutableList
                         list.add(response.body()!!.review)
-                        _reviews.value = GenericResponse(list, null, ResponseStatus.SUCCESS)
-                    } else if(response.code()==401) {
-                        _reviews.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
-                    }
+                        _reviews.value = GenericResponse(list, null, ResponseStatus.SUCCESS)}
                     else{
-                        _reviews.value = GenericResponse(null, "Show must exist,Rating is not a number", ResponseStatus.FAILURE)
+                        _reviews.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
 
                 override fun onFailure(call: Call<CreateReviewResponse>, t: Throwable) {
-                    _reviews.value = GenericResponse(reviews.value?.data, "Something went wrong", ResponseStatus.FAILURE)
+                    _reviews.value = GenericResponse(reviews.value?.data, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })

@@ -20,4 +20,17 @@ object Dialogs {
         }
     }
 
+    fun showQuitAppDialog(context: Context, listener: DialogInterface.OnClickListener) {
+        val builder = AlertDialog.Builder(context)
+        builder.apply {
+            setTitle("Confirm")
+            setMessage("Do you want to quit app?")
+            setPositiveButton(R.string.yes, listener)
+            setNegativeButton(R.string.no) { dialog, id ->
+                dialog.cancel()
+            }
+            create().show()
+        }
+    }
+
 }

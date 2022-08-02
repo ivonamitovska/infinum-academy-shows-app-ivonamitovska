@@ -32,6 +32,10 @@ class ShowPreferences(context: Context) {
         return if (json == null) null else Gson().fromJson(json, Token::class.java)
     }
 
+    fun deleteToken(){
+        prefs.edit().remove(USER_TOKEN_KEY).apply()
+    }
+
     fun saveImageToPrefs(key: String, image: Bitmap) {
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos)

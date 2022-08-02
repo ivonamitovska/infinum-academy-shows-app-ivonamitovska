@@ -34,6 +34,14 @@ class ShowsAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateDataTopRated(showTopRatedList: List<Show>?) {
+        if (showTopRatedList != null) {
+            items = showTopRatedList
+            notifyDataSetChanged()
+        }
+    }
+
     inner class ShowsViewHolder(private val binding: ItemShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Show) {

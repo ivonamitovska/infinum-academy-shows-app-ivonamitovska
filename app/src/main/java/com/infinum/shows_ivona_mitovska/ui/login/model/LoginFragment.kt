@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.FragmentLoginBinding
-import com.infinum.shows_ivona_mitovska.networking.ApiModule
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.login.LoginValidity
 import com.infinum.shows_ivona_mitovska.ui.login.viemodel.LoginViewModel
@@ -36,7 +35,7 @@ class LoginFragment : Fragment() {
 
         setFragmentResultListener(REGISTER_FRAGMENT_RESULT_KEY) { _, bundle ->
             if (bundle.getBoolean(USER_REGISTRATION_STATUS)) {
-                binding.login.text = "Registration successfull!"
+                binding.login.text = "Registration\nsuccessful!"
                 binding.registerLoginButton.isVisible = false
             }
         }
@@ -46,7 +45,6 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        ApiModule.initRetrofit()
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,9 +74,8 @@ class LoginFragment : Fragment() {
                 val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
                 prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
-            } else {
-                //TODO DISPLAY ERROR MESSAGE
             }
+            binding.pBarLogin.isVisible = false
         }
     }
 
@@ -94,6 +91,8 @@ class LoginFragment : Fragment() {
                 email = binding.emailEditText.text.toString(),
                 password = binding.passwordEditText.text.toString()
             )
+            binding.pBarLogin.isVisible = true
+
         }
     }
 

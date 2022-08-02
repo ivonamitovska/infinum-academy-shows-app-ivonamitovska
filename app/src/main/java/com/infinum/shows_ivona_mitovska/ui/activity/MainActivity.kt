@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.ActivityMainBinding
+import com.infinum.shows_ivona_mitovska.networking.ApiModule
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.utils.Constants
 
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ApiModule.initRetrofit()
         prefs = ShowPreferences(this)
         checkRemembered()
     }
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkRemembered() {
         val navController = (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment).navController
         val rememberMe = prefs.getBoolean(Constants.REMEMBER_ME)
-        if (rememberMe) {
+        if (rememberMe && prefs.getToken()!=null) {
             navController.navigate(R.id.showsFragment)
         }
     }

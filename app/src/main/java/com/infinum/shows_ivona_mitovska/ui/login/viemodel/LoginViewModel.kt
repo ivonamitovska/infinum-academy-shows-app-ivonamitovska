@@ -9,6 +9,11 @@ import com.infinum.shows_ivona_mitovska.data.response.generic.GenericResponse
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.model.Token
 import com.infinum.shows_ivona_mitovska.networking.ApiModule
+import com.infinum.shows_ivona_mitovska.utils.Constants.ACCESS_TOKEN
+import com.infinum.shows_ivona_mitovska.utils.Constants.CLIENT
+import com.infinum.shows_ivona_mitovska.utils.Constants.EXPIRY
+import com.infinum.shows_ivona_mitovska.utils.Constants.TOKEN_TYPE
+import com.infinum.shows_ivona_mitovska.utils.Constants.UID
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,22 +34,22 @@ class LoginViewModel : ViewModel() {
         ApiModule.retrofit.signIn(loginRequest)
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.code() == 201) {
-                        val accessToken = response.headers()["access-token"]
-                        val client = response.headers()["client"]
-                        val tokenType = response.headers()["token-type"]
-                        val expiry = response.headers()["expiry"]
-                        val uid = response.headers()["uid"]
+                    if (response.isSuccessful) {
+                        val accessToken = response.headers()[ACCESS_TOKEN]
+                        val client = response.headers()[CLIENT]
+                        val tokenType = response.headers()[TOKEN_TYPE]
+                        val expiry = response.headers()[EXPIRY]
+                        val uid = response.headers()[UID]
                         val token = Token(accessToken!!, client!!, tokenType!!, expiry!!, uid!!)
                         loginResultLiveData.value = GenericResponse(token, null, ResponseStatus.SUCCESS)
                     } else {
-                        loginResultLiveData.value = GenericResponse(null, "Invalid login credentials. Please try again.", ResponseStatus.FAILURE)
+                        loginResultLiveData.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
 
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    loginResultLiveData.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                    loginResultLiveData.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })

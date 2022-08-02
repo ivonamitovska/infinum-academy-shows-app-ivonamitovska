@@ -1,5 +1,7 @@
 package com.infinum.shows_ivona_mitovska.networking
 
+import android.content.ComponentName
+import com.infinum.shows_ivona_mitovska.utils.Constants
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -18,9 +20,12 @@ object ApiModule {
             })
             .build()
 
+
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(Json {
+                ignoreUnknownKeys = true
+            }.asConverterFactory("application/json".toMediaType()))
             .client(okhttp)
             .build()
             .create(ShowsApiService::class.java)

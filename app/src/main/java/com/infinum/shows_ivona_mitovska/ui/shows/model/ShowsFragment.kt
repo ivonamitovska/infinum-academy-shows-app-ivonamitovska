@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -21,11 +22,12 @@ import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
-import com.infinum.shows_ivona_mitovska.networking.ApiModule
+import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showQuitAppDialog
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.shows.adapter.ShowsAdapter
 import com.infinum.shows_ivona_mitovska.ui.shows.viewmodel.ShowsViewModel
 import com.infinum.shows_ivona_mitovska.utils.Constants
+import com.infinum.shows_ivona_mitovska.utils.Constants.REMEMBER_ME
 
 class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
@@ -39,7 +41,6 @@ class ShowsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        ApiModule.initRetrofit()
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -51,6 +52,7 @@ class ShowsFragment : Fragment() {
         handleOnBackPress()
         initShowsRecycler()
         initProfilePhoto()
+        initChipListener()
         binding.buttonEmpty.setOnClickListener {
             val isVisible = binding.emptyText.isVisible
             binding.groupId.isVisible = !isVisible
@@ -58,18 +60,16 @@ class ShowsFragment : Fragment() {
             binding.buttonEmpty.text = if (isVisible) getString(R.string.empty_list_text) else getString(R.string.show_list_text)
         }
         viewModel.showList.observe(viewLifecycleOwner) { response ->
-
             if (response.responseStatus == ResponseStatus.SUCCESS) {
                 showsAdapter.updateData(response.data)
-
-            } else {
-                //TODO DISPLAY ERROR MESSAGE
-
             }
-
+        }
+        viewModel.showListTopRated.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                showsAdapter.updateDataTopRated(response.data)
+            }
         }
         getShows()
-        onClickChip()
     }
 
     private fun getShows() {
@@ -77,14 +77,13 @@ class ShowsFragment : Fragment() {
         if (token != null) {
             viewModel.initShows(token)
         } else {
-            //TODO NAVIGATE TO LOGIN
+            Toast.makeText(activity, "You must log in!", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
         }
-
-
     }
 
-    private fun onClickChip() {
-        binding.chip.setOnClickListener {
+    private fun initChipListener() {
+        binding.topRatedChip.setOnClickListener {
             getTopRated()
         }
     }
@@ -99,9 +98,9 @@ class ShowsFragment : Fragment() {
     private fun handleOnBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val user = prefs.getString(Constants.USERNAME)
-                if (!user.isNullOrEmpty()) {
+                showQuitAppDialog(requireContext()) { dialog, id ->
                     requireActivity().finish()
+                    dialog.cancel()
                 }
             }
         })
@@ -120,11 +119,12 @@ class ShowsFragment : Fragment() {
         val dialog = BottomSheetDialog(this.requireContext())
         val bottomSheetBinding = DialogInfoProfileBinding.inflate(layoutInflater)
         dialog.setContentView(bottomSheetBinding.root)
-        bottomSheetBinding.emailDialog.text = prefs.getToken()!!.uid
+        bottomSheetBinding.emailDialog.text = prefs.getToken()?.uid
         bottomSheetBinding.profilePhotoDialog.setImageBitmap(prefs.getImageFromPrefs(Constants.USER_IMAGE))
         bottomSheetBinding.logOutButton.setOnClickListener {
             showLogOutDialog(requireContext()) { dialog, id ->
-                prefs.removeString(Constants.USERNAME)
+                prefs.removeString(REMEMBER_ME)
+                prefs.deleteToken()
                 findNavController().popBackStack()
                 dialog.cancel()
             }

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
-import com.infinum.shows_ivona_mitovska.ReviewRepository
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowDetailsBinding
@@ -67,17 +66,20 @@ class ShowDetailsFragment : Fragment() {
         }
     }
 
+
+
     private fun observeShow() {
         viewModel.show.observe(viewLifecycleOwner) { response ->
             if (response.responseStatus == ResponseStatus.SUCCESS) {
                 binding.toolbar.title = response.data!!.title
                 Glide.with(requireContext()).load(response.data.imageUrl).into(binding.imageDetails)
-                binding.imageDetails.clipToOutline = true
                 binding.infoDetails.text = response.data.description
             } else {
                 //TODO DISPLAY ERROR
             }
         }
+
+
     }
 
     private fun writeCommentButton() {
@@ -122,7 +124,7 @@ class ShowDetailsFragment : Fragment() {
     }
 
     private fun initReviewRecycler() {
-        reviewsAdapter = ReviewsAdapter(ReviewRepository.getReviews())
+        reviewsAdapter = ReviewsAdapter(listOf())
         binding.reviewRecycler.apply {
             layoutManager = LinearLayoutManager(this@ShowDetailsFragment.context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(this@ShowDetailsFragment.context, LinearLayoutManager.VERTICAL))

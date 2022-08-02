@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -13,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.FragmentRegisterBinding
-import com.infinum.shows_ivona_mitovska.networking.ApiModule
 import com.infinum.shows_ivona_mitovska.ui.register.RegisterValidity
 import com.infinum.shows_ivona_mitovska.ui.register.viewmodel.RegisterViewModel
 import com.infinum.shows_ivona_mitovska.utils.Constants
@@ -30,7 +30,6 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        ApiModule.initRetrofit()
         // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         return binding.root
@@ -44,15 +43,17 @@ class RegisterFragment : Fragment() {
         validPasswordRegisterListener()
         validPasswordRepeatListener()
         observeRegister()
- }
+    }
 
     private fun observeRegister() {
         viewModel.getRegistrationResultLiveData().observe(viewLifecycleOwner) {
-                if(it.responseStatus==ResponseStatus.SUCCESS){
-                    setFragmentResult(REGISTER_FRAGMENT_RESULT_KEY, bundleOf(USER_REGISTRATION_STATUS to true))
-                }
+            if (it.responseStatus == ResponseStatus.SUCCESS) {
+                setFragmentResult(REGISTER_FRAGMENT_RESULT_KEY, bundleOf(USER_REGISTRATION_STATUS to true))
             }
- }
+            binding.pBarRegister.isVisible = false
+            findNavController().popBackStack()
+        }
+    }
 
     private fun listenOnRegister() {
         binding.registerButton.setOnClickListener {
@@ -60,7 +61,8 @@ class RegisterFragment : Fragment() {
                 email = binding.emailRegisterEditText.text.toString(),
                 password = binding.passwordRegisterEditText.text.toString(),
             )
-            findNavController().popBackStack()
+            binding.pBarRegister.isVisible = true
+
         }
     }
 
@@ -115,7 +117,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun validRepeatPassword(passwordRepeat: String) {
-        if (!(passwordRepeat==binding.passwordRegisterEditText.text.toString())) {
+        if (!(passwordRepeat == binding.passwordRegisterEditText.text.toString())) {
             binding.passwordRepeatRegisterLayout.error = "Passwords doesn't match"
             registerValidity.setRepeatPasswordValidity(false)
         } else {

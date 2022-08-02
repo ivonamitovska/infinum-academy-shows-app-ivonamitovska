@@ -20,19 +20,23 @@ class ShowsViewModel : ViewModel() {
     val showList: LiveData<GenericResponse<List<Show>?>>
         get() = _showList
 
+    private val _showListTopRated = MutableLiveData<GenericResponse<List<Show>?>>()
+    val showListTopRated: LiveData<GenericResponse<List<Show>?>>
+        get() = _showListTopRated
+
     fun initShows(token: Token) {
         ApiModule.retrofit.getShows(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
             .enqueue(object : Callback<ShowsResponse> {
                 override fun onResponse(call: Call<ShowsResponse>, response: Response<ShowsResponse>) {
-                    if (response.code() == 200) {
+                    if (response.isSuccessful) {
                         _showList.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
                     }else {
-                        _showList.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
+                        _showList.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
 
                 override fun onFailure(call: Call<ShowsResponse>, t: Throwable) {
-                    _showList.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                    _showList.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })
@@ -42,16 +46,16 @@ class ShowsViewModel : ViewModel() {
         ApiModule.retrofit.getTopRated(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
             .enqueue(object : Callback<TopRatedResponse> {
                 override fun onResponse(call: Call<TopRatedResponse>, response: Response<TopRatedResponse>) {
-                    if (response.code() == 200) {
-                        _showList.value = GenericResponse(response.body()!!.shows,null,ResponseStatus.SUCCESS)
+                    if (response.isSuccessful) {
+                        _showListTopRated.value = GenericResponse(response.body()!!.shows,null,ResponseStatus.SUCCESS)
                     } else {
-                        _showList.value = GenericResponse(null, "You need to sign in or sign up before continuing.", ResponseStatus.FAILURE)
+                        _showListTopRated.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
 
                 override fun onFailure(call: Call<TopRatedResponse>, t: Throwable) {
 
-                    _showList.value = GenericResponse(null, "Something went wrong", ResponseStatus.FAILURE)
+                    _showListTopRated.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
                 }
 
             })
