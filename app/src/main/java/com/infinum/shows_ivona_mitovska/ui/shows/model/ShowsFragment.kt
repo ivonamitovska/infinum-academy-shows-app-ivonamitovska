@@ -85,7 +85,12 @@ class ShowsFragment : Fragment() {
 
     private fun initChipListener() {
         binding.topRatedChip.setOnClickListener {
-            getTopRated()
+            if(binding.topRatedChip.isChecked){
+                getTopRated()
+            }
+            else{
+                getShows()
+            }
         }
     }
 
