@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
+import com.infinum.shows_ivona_mitovska.database.ShowApplication
+import com.infinum.shows_ivona_mitovska.database.ShowDetailsViewModelFactory
+import com.infinum.shows_ivona_mitovska.database.ShowsDatabase
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowDetailsBinding
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
@@ -28,7 +31,9 @@ class ShowDetailsFragment : Fragment() {
     private lateinit var reviewsAdapter: ReviewsAdapter
     private val args: ShowDetailsFragmentArgs by navArgs()
     private lateinit var prefs: ShowPreferences
-    private val viewModel by viewModels<ShowDetailsViewModel>()
+    private val viewModel: ShowDetailsViewModel by viewModels {
+        ShowDetailsViewModelFactory((activity?.application as ShowApplication).database, requireActivity().application)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,13 +52,16 @@ class ShowDetailsFragment : Fragment() {
                 requireActivity().onBackPressed()
             }
         }
+
         writeCommentButton()
         initReviewRecycler()
         observeShow()
         observeReviews()
-        viewModel.initShow(args.selectedShow.id, prefs.getToken()!!)
-        viewModel.initReviews(args.selectedShow.id, prefs.getToken()!!)
+                viewModel.initShow(args.selectedShow.id, prefs.getToken()!!)
+                viewModel.initReviews(args.selectedShow.id, prefs.getToken()!!)
     }
+
+
 
     private fun observeReviews() {
         viewModel.reviews.observe(viewLifecycleOwner) { response ->
@@ -65,8 +73,6 @@ class ShowDetailsFragment : Fragment() {
             }
         }
     }
-
-
 
     private fun observeShow() {
         viewModel.show.observe(viewLifecycleOwner) { response ->

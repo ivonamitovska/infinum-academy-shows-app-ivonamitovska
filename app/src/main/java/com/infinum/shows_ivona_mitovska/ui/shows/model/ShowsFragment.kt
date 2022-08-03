@@ -19,6 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
+import com.infinum.shows_ivona_mitovska.database.ShowApplication
+import com.infinum.shows_ivona_mitovska.database.ShowViewModelFactory
+import com.infinum.shows_ivona_mitovska.database.ShowsDatabase
 import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
@@ -33,7 +36,9 @@ class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
     private val binding get() = _binding!!
     private lateinit var showsAdapter: ShowsAdapter
-    private val viewModel by viewModels<ShowsViewModel>()
+    private val viewModel: ShowsViewModel by viewModels {
+        ShowViewModelFactory((activity?.application as ShowApplication).database,requireActivity().application)
+    }
     private lateinit var prefs: ShowPreferences
     private val cameraPhotoLauncher = initCameraLauncher()
 
@@ -41,8 +46,10 @@ class ShowsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,7 +111,7 @@ class ShowsFragment : Fragment() {
         if (token != null) {
             viewModel.initShows(token)
         } else {
-            Toast.makeText(activity, getString(R.string.must_login), Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.must_login, Toast.LENGTH_LONG).show()
             findNavController().popBackStack()
         }
 
