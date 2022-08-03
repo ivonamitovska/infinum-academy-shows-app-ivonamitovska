@@ -38,5 +38,8 @@
     <string name="top_rated">Top rated</string>
     <string name="registration_successfull">Registration\nsuccessful!</string>
     <string name="show_image">Show Image</string>
+    <string name="must_login">You must log in!</string>
+    <string name="confirm">Confirm</string>
+    <string name="quit_app">Do you want to quit app?</string>
 
 </resources>

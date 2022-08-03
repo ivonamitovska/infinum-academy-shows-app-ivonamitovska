@@ -10,7 +10,7 @@ object Dialogs {
     fun showLogOutDialog(context: Context, listener: DialogInterface.OnClickListener) {
         val builder = AlertDialog.Builder(context)
         builder.apply {
-            setTitle("Confirm")
+            setTitle(context.getString(R.string.confirm))
             setMessage(R.string.do_you_want_to_log_out)
             setPositiveButton(R.string.yes, listener)
             setNegativeButton(R.string.no) { dialog, id ->
@@ -23,8 +23,8 @@ object Dialogs {
     fun showQuitAppDialog(context: Context, listener: DialogInterface.OnClickListener) {
         val builder = AlertDialog.Builder(context)
         builder.apply {
-            setTitle("Confirm")
-            setMessage("Do you want to quit app?")
+            setTitle(context.getString(R.string.confirm))
+            setMessage(context.getString(R.string.quit_app))
             setPositiveButton(R.string.yes, listener)
             setNegativeButton(R.string.no) { dialog, id ->
                 dialog.cancel()

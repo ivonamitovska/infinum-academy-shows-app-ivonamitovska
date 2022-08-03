@@ -18,15 +18,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         ApiModule.initRetrofit()
         prefs = ShowPreferences(this)
-        checkRemembered()
+        val state = savedInstanceState?.getBoolean("saveState")
+        if (state == null || !state) {
+            checkRemembered()
+        }
     }
 
     private fun checkRemembered() {
         val navController = (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment).navController
         val rememberMe = prefs.getBoolean(Constants.REMEMBER_ME)
-        if (rememberMe && prefs.getToken()!=null) {
+        if (rememberMe && prefs.getToken() != null) {
             navController.navigate(R.id.showsFragment)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("saveState", true)
+        super.onSaveInstanceState(outState)
     }
 
 

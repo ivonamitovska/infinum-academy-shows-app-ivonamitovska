@@ -29,7 +29,7 @@ class ShowsViewModel : ViewModel() {
             .enqueue(object : Callback<ShowsResponse> {
                 override fun onResponse(call: Call<ShowsResponse>, response: Response<ShowsResponse>) {
                     if (response.isSuccessful) {
-                        _showList.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
+                        _showList.value = GenericResponse(response.body()?.shows, null, ResponseStatus.SUCCESS)
                     }else {
                         _showList.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }

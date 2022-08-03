@@ -6,6 +6,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -67,16 +68,23 @@ class LoginFragment : Fragment() {
         viewModel.getLoginResultLiveData().observe(viewLifecycleOwner) { response ->
             if (response.responseStatus == ResponseStatus.SUCCESS) {
                 prefs.saveToken(response.data!!)
-                prefs.saveBoolean(Constants.REMEMBER_ME, false)
-                if (binding.rememberMeCheckBox.isChecked) {
-                    prefs.saveBoolean(Constants.REMEMBER_ME, true)
-                }
-                val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
-                prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
+                saveRemeberMe(binding.rememberMeCheckBox.isChecked)
+                saveDefaultImage()
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
+            } else {
+                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
             }
             binding.pBarLogin.isVisible = false
         }
+    }
+
+    private fun saveDefaultImage() {
+        val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
+        prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
+    }
+
+    private fun saveRemeberMe(checked: Boolean) {
+        prefs.saveBoolean(Constants.REMEMBER_ME, checked)
     }
 
     private fun registerButton() {

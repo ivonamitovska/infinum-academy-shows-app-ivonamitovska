@@ -48,7 +48,7 @@ class ShowsAdapter(
             binding.showName.text = item.title
             Glide.with(this.itemView)
                 .load(item.imageUrl)
-                .placeholder(R.drawable.severance)
+                .placeholder(R.drawable.image)
                 .into(binding.showImage)
             binding.showInfo.text = item.description
             binding.cardShow.setOnClickListener {

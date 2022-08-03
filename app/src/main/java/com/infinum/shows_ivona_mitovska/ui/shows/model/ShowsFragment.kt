@@ -43,7 +43,6 @@ class ShowsFragment : Fragment() {
     ): View {
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,23 +52,51 @@ class ShowsFragment : Fragment() {
         initShowsRecycler()
         initProfilePhoto()
         initChipListener()
-        binding.buttonEmpty.setOnClickListener {
-            val isVisible = binding.emptyText.isVisible
-            binding.groupId.isVisible = !isVisible
-            binding.showsRecycler.isVisible = isVisible
-            binding.buttonEmpty.text = if (isVisible) getString(R.string.empty_list_text) else getString(R.string.show_list_text)
+        observeShowList()
+        observeTopRatedShows()
+        binding.pBarShows.isVisible = true
+        val savedState = savedInstanceState?.getBoolean("topRated")
+        if (savedState == null || !savedState) {
+            getShows()
+        } else {
+            getTopRated()
         }
-        viewModel.showList.observe(viewLifecycleOwner) { response ->
-            if (response.responseStatus == ResponseStatus.SUCCESS) {
-                showsAdapter.updateData(response.data)
-            }
-        }
+    }
+
+    private fun observeTopRatedShows() {
         viewModel.showListTopRated.observe(viewLifecycleOwner) { response ->
             if (response.responseStatus == ResponseStatus.SUCCESS) {
-                showsAdapter.updateDataTopRated(response.data)
+                if (response.data?.size == 0) {
+                    binding.groupId.isVisible = true
+                    binding.showsRecycler.isVisible = false
+                } else {
+                    showsAdapter.updateDataTopRated(response.data)
+                    binding.groupId.isVisible = false
+                    binding.showsRecycler.isVisible = true
+                }
+            } else {
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
             }
+            binding.pBarShows.isVisible = false
         }
-        getShows()
+    }
+
+    private fun observeShowList() {
+        viewModel.showList.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                if (response.data?.size == 0) {
+                    binding.groupId.isVisible = true
+                    binding.showsRecycler.isVisible = false
+                } else {
+                    showsAdapter.updateData(response.data)
+                    binding.groupId.isVisible = false
+                    binding.showsRecycler.isVisible = true
+                }
+            } else {
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
+            }
+            binding.pBarShows.isVisible = false
+        }
     }
 
     private fun getShows() {
@@ -77,7 +104,7 @@ class ShowsFragment : Fragment() {
         if (token != null) {
             viewModel.initShows(token)
         } else {
-            Toast.makeText(activity, "You must log in!", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, getString(R.string.must_login), Toast.LENGTH_LONG).show()
             findNavController().popBackStack()
         }
 
@@ -85,10 +112,10 @@ class ShowsFragment : Fragment() {
 
     private fun initChipListener() {
         binding.topRatedChip.setOnClickListener {
-            if(binding.topRatedChip.isChecked){
+            binding.pBarShows.isVisible = true
+            if (binding.topRatedChip.isChecked) {
                 getTopRated()
-            }
-            else{
+            } else {
                 getShows()
             }
         }
@@ -169,5 +196,10 @@ class ShowsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("topRated", binding.topRatedChip.isChecked)
+        super.onSaveInstanceState(outState)
     }
 }
