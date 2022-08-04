@@ -6,6 +6,10 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.BounceInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -52,6 +56,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animateShowTriangle()
         listenOnLogin()
         validEmailListener()
         validPasswordListener()
@@ -143,6 +148,15 @@ class LoginFragment : Fragment() {
             binding.passwordLayout.error = null
             loginValidity.setPasswordValidity(true)
         }
+    }
+
+    fun animateShowTriangle()=with(binding.triangle){
+        translationY=-500f
+        animate()
+            .translationY(0f)
+            .setDuration(1000)
+            .setInterpolator(BounceInterpolator())
+            .start()
     }
 
     override fun onDestroyView() {
