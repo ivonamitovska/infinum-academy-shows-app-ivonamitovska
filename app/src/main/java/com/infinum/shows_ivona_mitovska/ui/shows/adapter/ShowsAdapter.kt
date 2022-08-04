@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.ItemShowBinding
 import com.infinum.shows_ivona_mitovska.model.Show
 
@@ -19,6 +21,7 @@ class ShowsAdapter(
 
     override fun onBindViewHolder(holder: ShowsViewHolder, position: Int) {
         holder.bind(items[position])
+
     }
 
     override fun getItemCount() = items.count()
@@ -31,12 +34,23 @@ class ShowsAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateDataTopRated(showTopRatedList: List<Show>?) {
+        if (showTopRatedList != null) {
+            items = showTopRatedList
+            notifyDataSetChanged()
+        }
+    }
+
     inner class ShowsViewHolder(private val binding: ItemShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Show) {
-            binding.showName.text = item.name
-            binding.showImage.setImageResource(item.imageResId)
-            binding.showInfo.text = item.info
+            binding.showName.text = item.title
+            Glide.with(this.itemView)
+                .load(item.imageUrl)
+                .placeholder(R.drawable.image)
+                .into(binding.showImage)
+            binding.showInfo.text = item.description
             binding.cardShow.setOnClickListener {
                 onItemClickCallback(item)
             }

@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -24,7 +23,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:title="Title"/>
+                app:title="Title"
+                app:titleTextColor="@color/black"/>
 
 
 
@@ -48,6 +48,7 @@
 
             <ImageView
                 android:id="@+id/imageDetails"
+                android:contentDescription="@string/show_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
@@ -137,6 +138,13 @@
             android:textAllCaps="false"
             android:textColor="@color/white"/>
     </FrameLayout>
+    <ProgressBar
+        android:id="@+id/pBarShowDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:focusable="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

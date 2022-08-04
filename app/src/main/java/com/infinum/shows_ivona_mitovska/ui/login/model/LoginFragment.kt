@@ -6,24 +6,40 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.infinum.shows_ivona_mitovska.R
+import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.FragmentLoginBinding
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.login.LoginValidity
+import com.infinum.shows_ivona_mitovska.ui.login.viemodel.LoginViewModel
 import com.infinum.shows_ivona_mitovska.utils.Constants
+import com.infinum.shows_ivona_mitovska.utils.Constants.REGISTER_FRAGMENT_RESULT_KEY
+import com.infinum.shows_ivona_mitovska.utils.Constants.USER_REGISTRATION_STATUS
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val loginValidity = LoginValidity()
     private lateinit var prefs: ShowPreferences
+    private val viewModel by viewModels<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = ShowPreferences(requireContext())
+
+        setFragmentResultListener(REGISTER_FRAGMENT_RESULT_KEY) { _, bundle ->
+            if (bundle.getBoolean(USER_REGISTRATION_STATUS)) {
+                binding.login.text = getString(R.string.registration_successfull)
+                binding.registerLoginButton.isVisible = false
+            }
+        }
     }
 
     override fun onCreateView(
@@ -39,6 +55,8 @@ class LoginFragment : Fragment() {
         listenOnLogin()
         validEmailListener()
         validPasswordListener()
+        registerButton()
+        observeLogin()
     }
 
     override fun onResume() {
@@ -46,15 +64,43 @@ class LoginFragment : Fragment() {
         binding.passwordEditText.text?.clear()
     }
 
-    private fun listenOnLogin() {
-        val email = binding.emailEditText.text
-        binding.loginButton.setOnClickListener {
-            if (binding.rememberMeCheckBox.isChecked) {
-                prefs.saveString(Constants.USERNAME, email.toString())
+    private fun observeLogin() {
+        viewModel.getLoginResultLiveData().observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                prefs.saveToken(response.data!!)
+                saveRemeberMe(binding.rememberMeCheckBox.isChecked)
+                saveDefaultImage()
+                findNavController().navigate(LoginFragmentDirections.toShowsFragment())
+            } else {
+                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
             }
-            val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
-            prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
-            findNavController().navigate(LoginFragmentDirections.toShowsFragment(email.toString()))
+            binding.pBarLogin.isVisible = false
+        }
+    }
+
+    private fun saveDefaultImage() {
+        val defaultImage = BitmapFactory.decodeResource(resources, R.drawable.placeholder)
+        prefs.saveImageToPrefs(Constants.USER_IMAGE, defaultImage)
+    }
+
+    private fun saveRemeberMe(checked: Boolean) {
+        prefs.saveBoolean(Constants.REMEMBER_ME, checked)
+    }
+
+    private fun registerButton() {
+        binding.registerLoginButton.setOnClickListener {
+            findNavController().navigate(R.id.registerFragment)
+        }
+    }
+
+    private fun listenOnLogin() {
+        binding.loginButton.setOnClickListener {
+            viewModel.onLoginButtonClicked(
+                email = binding.emailEditText.text.toString(),
+                password = binding.passwordEditText.text.toString()
+            )
+            binding.pBarLogin.isVisible = true
+
         }
     }
 

@@ -18,29 +18,26 @@
         app:title="Shows"
         app:titleTextAppearance="@style/Toolbar.TitleText">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profilePhotoImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/profile_photo"
-            android:src="@drawable/placeholder"
             android:layout_gravity="end"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="10dp"
-            android:adjustViewBounds="true"/>
+            android:contentDescription="@string/profile_photo"
+            android:src="@drawable/placeholder"/>
 
-        <Button
-            android:id="@+id/buttonEmpty"
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/topRatedChip"
+            style="@style/Colors_Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:layout_gravity="end"
-            android:background="@drawable/buttons_style"
-            android:text="@string/list_shows"/>
+            android:layout_gravity="center"
+            android:text="@string/top_rated"/>
 
     </androidx.appcompat.widget.Toolbar>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showsRecycler"
@@ -57,7 +54,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="@string/your_shows_are_not_showing_get_it"
-        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emptyImage"/>
@@ -68,7 +64,6 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/empty_state_image"
         android:src="@drawable/emptyicon"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +73,19 @@
         android:id="@+id/groupId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="emptyImage,emptyText"/>
+
+    <ProgressBar
+        android:id="@+id/pBarShows"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

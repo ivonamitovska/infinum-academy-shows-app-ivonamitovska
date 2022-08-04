@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.ItemReviewBinding
@@ -38,12 +39,12 @@ class ReviewsAdapter(
         fun bind(review: Review) {
             binding.apply {
                 placeholderView.setImageResource(R.drawable.placeholder)
-                nameReview.text = review.name
+                nameReview.text = review.user.email
                 if (review.comment.isNotEmpty()) {
-                    commentReview.visibility = View.VISIBLE
+                    commentReview.isVisible=true
                     commentReview.text = review.comment
                 }
-                numOfStarsComment.text = review.review.toString()
+                numOfStarsComment.text = review.rating.toString()
             }
         }
     }

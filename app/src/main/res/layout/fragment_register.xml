@@ -3,7 +3,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -11,8 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_purple"
-        tools:context=".ui.login.LoginActivity">
+        android:background="@color/my_purple">
 
         <ImageView
             android:id="@+id/topLeftImageView"
@@ -63,31 +61,21 @@
             app:layout_constraintTop_toBottomOf="@id/topLeftImageView"/>
 
         <TextView
-            android:id="@+id/login"
+            android:id="@+id/register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="100dp"
-            android:text="@string/login"
+            android:text="@string/register"
             android:textColor="@color/white"
             android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/triangle"/>
 
-        <TextView
-            android:id="@+id/info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/in_order_to_continue_please_log_in"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/login"
-            app:layout_constraintTop_toBottomOf="@id/login"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailLayout"
+            android:id="@+id/emailRegisterLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,10 +86,10 @@
             android:theme="@style/TextInputLayoutStyle"
             app:boxStrokeColor="@color/white"
             app:hintTextColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/info">
+            app:layout_constraintTop_toBottomOf="@id/register">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailEditText"
+                android:id="@+id/emailRegisterEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -115,7 +103,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
 
-            android:id="@+id/passwordLayout"
+            android:id="@+id/passwordRegisterLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -126,12 +114,41 @@
             android:theme="@style/TextInputLayoutStyle"
             app:boxStrokeColor="@color/white"
             app:hintTextColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/emailLayout"
+            app:layout_constraintTop_toBottomOf="@id/emailRegisterLayout"
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@color/white">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordEditText"
+                android:id="@+id/passwordRegisterEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="@color/white"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/passwordRepeatRegisterLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/repeat_password"
+            android:textColorHint="@color/white"
+            android:theme="@style/TextInputLayoutStyle"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/passwordRegisterLayout"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordRepeatRegisterEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
@@ -141,49 +158,23 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <CheckBox
-            android:id="@+id/rememberMeCheckBox"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            app:buttonTint="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/passwordLayout"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/remember_me"
-            android:textColor="@color/white" />
-
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/registerButton"
             style="@style/Widget.AppTheme.MaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="110dp"
             android:background="@drawable/round_style"
-            android:enabled="false"
-            android:text="@string/login"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/passwordLayout"/>
-
-        <Button
-            android:id="@+id/registerLoginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:enabled="true"
             android:text="@string/register"
-            android:layout_marginTop="5dp"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:textAllCaps="false"
-            android:background="@null"
-            android:textStyle="bold"
-            style="?android:attr/borderlessButtonStyle"
-            app:layout_constraintTop_toBottomOf="@id/loginButton"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/passwordRepeatRegisterLayout"/>
 
         <ProgressBar
-            android:id="@+id/pBarLogin"
+            android:id="@+id/pBarRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

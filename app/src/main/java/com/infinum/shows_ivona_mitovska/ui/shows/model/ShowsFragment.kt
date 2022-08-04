@@ -8,29 +8,31 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.infinum.shows_ivona_mitovska.R
+import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
+import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showQuitAppDialog
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.shows.adapter.ShowsAdapter
 import com.infinum.shows_ivona_mitovska.ui.shows.viewmodel.ShowsViewModel
 import com.infinum.shows_ivona_mitovska.utils.Constants
+import com.infinum.shows_ivona_mitovska.utils.Constants.REMEMBER_ME
 
 class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
     private val binding get() = _binding!!
     private lateinit var showsAdapter: ShowsAdapter
-    private val args: ShowsFragmentArgs by navArgs()
     private val viewModel by viewModels<ShowsViewModel>()
     private lateinit var prefs: ShowPreferences
     private val cameraPhotoLauncher = initCameraLauncher()
@@ -49,23 +51,89 @@ class ShowsFragment : Fragment() {
         handleOnBackPress()
         initShowsRecycler()
         initProfilePhoto()
-        binding.buttonEmpty.setOnClickListener {
-            val isVisible = binding.emptyText.isVisible
-            binding.groupId.isVisible = !isVisible
-            binding.showsRecycler.isVisible = isVisible
-            binding.buttonEmpty.text = if (isVisible) getString(R.string.empty_list_text) else getString(R.string.show_list_text)
+        initChipListener()
+        observeShowList()
+        observeTopRatedShows()
+        binding.pBarShows.isVisible = true
+        val savedState = savedInstanceState?.getBoolean("topRated")
+        if (savedState == null || !savedState) {
+            getShows()
+        } else {
+            getTopRated()
         }
-        viewModel.showList.observe(viewLifecycleOwner) { showList ->
-            showsAdapter.updateData(showList)
+    }
+
+    private fun observeTopRatedShows() {
+        viewModel.showListTopRated.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                if (response.data?.size == 0) {
+                    binding.groupId.isVisible = true
+                    binding.showsRecycler.isVisible = false
+                } else {
+                    showsAdapter.updateDataTopRated(response.data)
+                    binding.groupId.isVisible = false
+                    binding.showsRecycler.isVisible = true
+                }
+            } else {
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
+            }
+            binding.pBarShows.isVisible = false
+        }
+    }
+
+    private fun observeShowList() {
+        viewModel.showList.observe(viewLifecycleOwner) { response ->
+            if (response.responseStatus == ResponseStatus.SUCCESS) {
+                if (response.data?.size == 0) {
+                    binding.groupId.isVisible = true
+                    binding.showsRecycler.isVisible = false
+                } else {
+                    showsAdapter.updateData(response.data)
+                    binding.groupId.isVisible = false
+                    binding.showsRecycler.isVisible = true
+                }
+            } else {
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
+            }
+            binding.pBarShows.isVisible = false
+        }
+    }
+
+    private fun getShows() {
+        val token = prefs.getToken()
+        if (token != null) {
+            viewModel.initShows(token)
+        } else {
+            Toast.makeText(activity, getString(R.string.must_login), Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
+        }
+
+    }
+
+    private fun initChipListener() {
+        binding.topRatedChip.setOnClickListener {
+            binding.pBarShows.isVisible = true
+            if (binding.topRatedChip.isChecked) {
+                getTopRated()
+            } else {
+                getShows()
+            }
+        }
+    }
+
+    private fun getTopRated() {
+        val token = prefs.getToken()
+        if (token != null) {
+            viewModel.topRated(token)
         }
     }
 
     private fun handleOnBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val user = prefs.getString(Constants.USERNAME)
-                if (!user.isNullOrEmpty()) {
+                showQuitAppDialog(requireContext()) { dialog, id ->
                     requireActivity().finish()
+                    dialog.cancel()
                 }
             }
         })
@@ -84,12 +152,13 @@ class ShowsFragment : Fragment() {
         val dialog = BottomSheetDialog(this.requireContext())
         val bottomSheetBinding = DialogInfoProfileBinding.inflate(layoutInflater)
         dialog.setContentView(bottomSheetBinding.root)
-        bottomSheetBinding.emailDialog.text = args.username
+        bottomSheetBinding.emailDialog.text = prefs.getToken()?.uid
         bottomSheetBinding.profilePhotoDialog.setImageBitmap(prefs.getImageFromPrefs(Constants.USER_IMAGE))
         bottomSheetBinding.logOutButton.setOnClickListener {
             showLogOutDialog(requireContext()) { dialog, id ->
-                prefs.removeString(Constants.USERNAME)
                 findNavController().popBackStack()
+                prefs.removeString(REMEMBER_ME)
+                prefs.deleteToken()
                 dialog.cancel()
             }
             dialog.dismiss()
@@ -108,8 +177,7 @@ class ShowsFragment : Fragment() {
 
     private fun initShowsRecycler() {
         showsAdapter = ShowsAdapter(listOf()) { show ->
-            val email = args.username
-            findNavController().navigate(ShowsFragmentDirections.toShowDetailsFragment(show, email))
+            findNavController().navigate(ShowsFragmentDirections.toShowDetailsFragment(show))
         }
         binding.showsRecycler.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -128,5 +196,10 @@ class ShowsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("topRated", binding.topRatedChip.isChecked)
+        super.onSaveInstanceState(outState)
     }
 }

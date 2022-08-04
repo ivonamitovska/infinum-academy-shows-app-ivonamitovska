@@ -10,8 +10,8 @@
         <action android:id="@+id/toShowsFragment" app:destination="@id/showsFragment" app:enterAnim="@anim/enter_animation"
             app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation"
             app:popExitAnim="@anim/pop_exit_animation">
-            <argument android:name="username" app:argType="string"/>
         </action>
+        <action android:id="@+id/to_registerFragment" app:destination="@id/registerFragment"/>
     </fragment>
     <fragment android:id="@+id/showsFragment"
         android:name="com.infinum.shows_ivona_mitovska.ui.shows.model.ShowsFragment"
@@ -20,15 +20,16 @@
         <action android:id="@+id/toShowDetailsFragment" app:destination="@id/showDetailsFragment" app:enterAnim="@anim/enter_animation"
             app:exitAnim="@anim/exit_animation" app:popEnterAnim="@anim/pop_enter_animation" app:popExitAnim="@anim/pop_exit_animation">
             <argument android:name="selectedShow" app:argType="com.infinum.shows_ivona_mitovska.model.Show"/>
-            <argument android:name="username" app:argType="string"/>
         </action>
-        <argument android:name="username" app:argType="string"/>
     </fragment>
     <fragment android:id="@+id/showDetailsFragment"
         android:name="com.infinum.shows_ivona_mitovska.ui.show_details.model.ShowDetailsFragment"
         android:label="fragment_show_details"
         tools:layout="@layout/fragment_show_details">
         <argument android:name="selectedShow" app:argType="com.infinum.shows_ivona_mitovska.model.Show"/>
-        <argument android:name="username" app:argType="string"/>
+
     </fragment>
+    <fragment android:id="@+id/registerFragment" android:name="com.infinum.shows_ivona_mitovska.ui.register.model.RegisterFragment"
+        android:label="fragment_register" tools:layout="@layout/fragment_register"/>
+
 </navigation>
