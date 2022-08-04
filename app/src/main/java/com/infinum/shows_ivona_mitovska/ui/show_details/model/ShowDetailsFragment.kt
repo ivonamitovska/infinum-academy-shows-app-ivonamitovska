@@ -18,7 +18,6 @@ import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.database.ShowApplication
 import com.infinum.shows_ivona_mitovska.database.ShowDetailsViewModelFactory
-import com.infinum.shows_ivona_mitovska.database.ShowsDatabase
 import com.infinum.shows_ivona_mitovska.databinding.DialogAddReviewBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowDetailsBinding
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
@@ -57,11 +56,9 @@ class ShowDetailsFragment : Fragment() {
         initReviewRecycler()
         observeShow()
         observeReviews()
-                viewModel.initShow(args.selectedShow.id, prefs.getToken()!!)
-                viewModel.initReviews(args.selectedShow.id, prefs.getToken()!!)
+        viewModel.initShow(args.selectedShow.id, prefs.getToken()!!)
+        viewModel.initReviews(args.selectedShow.id, prefs.getToken()!!)
     }
-
-
 
     private fun observeReviews() {
         viewModel.reviews.observe(viewLifecycleOwner) { response ->
@@ -69,7 +66,7 @@ class ShowDetailsFragment : Fragment() {
                 reviewsAdapter.updateData(response.data)
                 updateRating(response.data!!.size.toString(), viewModel.getAverageReviewRating())
             } else {
-                //TODO DISPLAY ERROR
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -83,7 +80,7 @@ class ShowDetailsFragment : Fragment() {
                 binding.imageDetails.clipToOutline = true
                 binding.infoDetails.text = response.data?.description
             } else {
-                //TODO DISPLAY ERROR
+                Toast.makeText(requireContext(), response.errorMsg, Toast.LENGTH_LONG).show()
             }
         }
 

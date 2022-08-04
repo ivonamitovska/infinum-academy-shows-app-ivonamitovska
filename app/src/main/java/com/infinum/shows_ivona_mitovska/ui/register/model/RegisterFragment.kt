@@ -5,6 +5,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.FragmentRegisterBinding
 import com.infinum.shows_ivona_mitovska.ui.register.RegisterValidity
@@ -49,6 +51,9 @@ class RegisterFragment : Fragment() {
         viewModel.getRegistrationResultLiveData().observe(viewLifecycleOwner) {
             if (it.responseStatus == ResponseStatus.SUCCESS) {
                 setFragmentResult(REGISTER_FRAGMENT_RESULT_KEY, bundleOf(USER_REGISTRATION_STATUS to true))
+            }
+            else{
+                Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
             }
             binding.pBarRegister.isVisible = false
             findNavController().popBackStack()

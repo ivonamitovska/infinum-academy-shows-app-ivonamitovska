@@ -72,7 +72,7 @@ class LoginFragment : Fragment() {
                 saveDefaultImage()
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
             } else {
-                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
             }
             binding.pBarLogin.isVisible = false
         }
