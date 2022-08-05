@@ -1,5 +1,6 @@
 package com.infinum.shows_ivona_mitovska.ui.login.model
 
+import android.animation.ValueAnimator
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Patterns
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
+import android.view.animation.AnimationUtils
 import android.view.animation.BounceInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -57,6 +59,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         animateShowTriangle()
+        animateTitle()
         listenOnLogin()
         validEmailListener()
         validPasswordListener()
@@ -158,6 +161,11 @@ class LoginFragment : Fragment() {
             .setInterpolator(BounceInterpolator())
             .start()
     }
+    fun animateTitle(){
+        binding.title.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.zoom))
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
