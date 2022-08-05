@@ -4,11 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.infinum.shows_ivona_mitovska.data.request.CreateReviewRequest
 import com.infinum.shows_ivona_mitovska.data.response.CreateReviewResponse
@@ -30,7 +28,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application) : AndroidViewModel(app) {
+class ShowDetailsViewModel(private val database: ShowsDatabase, app: Application) : AndroidViewModel(app) {
     private val _show = MutableLiveData<GenericResponse<Show?>>()
     val show: LiveData<GenericResponse<Show?>>
         get() = _show
@@ -40,7 +38,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
         get() = _reviews
 
     fun initReviews(showId: String, token: Token) {
-        if(hasInternetConnection()){
+        if (hasInternetConnection()) {
             ApiModule.retrofit.getReviews(token.accessToken, token.client, token.tokenType, token.expiry, token.uid, showId)
                 .enqueue(object : Callback<ReviewsListResponse> {
                     override fun onResponse(call: Call<ReviewsListResponse>, response: Response<ReviewsListResponse>) {
@@ -50,8 +48,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
                                 database.reviewDao().insertAllReviews(response.body()!!.reviews)
                             }
 
-                        }
-                        else{
+                        } else {
                             _reviews.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                         }
                     }
@@ -61,8 +58,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
                     }
 
                 })
-        }
-        else{
+        } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val reviews = database.reviewDao().getAllReviews()
                 withContext(Dispatchers.Main) {
@@ -77,7 +73,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
     }
 
     fun initShow(id: String, token: Token) {
-        if(hasInternetConnection()){
+        if (hasInternetConnection()) {
             ApiModule.retrofit.getShowDetails(token.accessToken, token.client, token.tokenType, token.expiry, token.uid, id)
                 .enqueue(object : Callback<ShowDetailsResponse> {
                     override fun onResponse(call: Call<ShowDetailsResponse>, response: Response<ShowDetailsResponse>) {
@@ -87,8 +83,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
                                 database.showDao().getShow(id)
                             }
 
-                        }
-                        else{
+                        } else {
                             _show.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                         }
                     }
@@ -98,8 +93,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
                     }
 
                 })
-        }
-        else{
+        } else {
             viewModelScope.launch(Dispatchers.IO) {
                 val show = database.showDao().getShow(id)
                 withContext(Dispatchers.Main) {
@@ -124,13 +118,12 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app:Application)
             .enqueue(object : Callback<CreateReviewResponse> {
                 override fun onResponse(call: Call<CreateReviewResponse>, response: Response<CreateReviewResponse>) {
                     if (response.isSuccessful) {
-                        val list = _reviews.value?.data as MutableList
+                        val list = _reviews.value!!.data as MutableList
                         list.add(response.body()!!.review)
                         _reviews.value = GenericResponse(list, null, ResponseStatus.SUCCESS)
-                        viewModelScope.launch(Dispatchers.IO) { database.reviewDao().addReview(response.body()!!.review)  }
+                        viewModelScope.launch(Dispatchers.IO) { database.reviewDao().addReview(response.body()!!.review) }
 
-                    }
-                    else{
+                    } else {
                         _reviews.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
