@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.databinding.ItemShowBinding
 import com.infinum.shows_ivona_mitovska.model.Show
@@ -48,7 +49,8 @@ class ShowsAdapter(
             binding.showName.text = item.title
             Glide.with(this.itemView)
                 .load(item.imageUrl)
-                .placeholder(R.drawable.image)
+                .placeholder(R.drawable.ic_image_2)
+                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
                 .into(binding.showImage)
             binding.showInfo.text = item.description
             binding.cardShow.setOnClickListener {

@@ -1,7 +1,6 @@
 package com.infinum.shows_ivona_mitovska.ui.register.model
 
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.databinding.FragmentRegisterBinding
 import com.infinum.shows_ivona_mitovska.ui.register.RegisterValidity
 import com.infinum.shows_ivona_mitovska.ui.register.viewmodel.RegisterViewModel
-import com.infinum.shows_ivona_mitovska.utils.Constants
 import com.infinum.shows_ivona_mitovska.utils.Constants.REGISTER_FRAGMENT_RESULT_KEY
 import com.infinum.shows_ivona_mitovska.utils.Constants.USER_REGISTRATION_STATUS
 
@@ -45,14 +43,27 @@ class RegisterFragment : Fragment() {
         validPasswordRegisterListener()
         validPasswordRepeatListener()
         observeRegister()
+
+        viewModel.getEmailRegisterLiveData().observe(viewLifecycleOwner) {
+            binding.emailRegisterLayout.error = it
+        }
+        viewModel.getPasswordRegisterLiveData().observe(viewLifecycleOwner) {
+            binding.passwordRegisterLayout.error = it
+        }
+        viewModel.getPasswordRepeatRegisterLiveData().observe(viewLifecycleOwner) {
+            binding.passwordRepeatRegisterLayout.error = it
+        }
+
+        viewModel.getRegisterValidityLiveData().observe(viewLifecycleOwner) {
+            binding.registerButton.isEnabled = it
+        }
     }
 
     private fun observeRegister() {
         viewModel.getRegistrationResultLiveData().observe(viewLifecycleOwner) {
             if (it.responseStatus == ResponseStatus.SUCCESS) {
                 setFragmentResult(REGISTER_FRAGMENT_RESULT_KEY, bundleOf(USER_REGISTRATION_STATUS to true))
-            }
-            else{
+            } else {
                 Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
             }
             binding.pBarRegister.isVisible = false
@@ -71,65 +82,26 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun checkValidity() {
-        binding.registerButton.isEnabled = registerValidity.isLoginValid()
-    }
-
     private fun validEmailRegisterListener() {
         binding.emailRegisterEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
-            validEmail(text.toString())
-            checkValidity()
+            viewModel.validEmail(text.toString())
+            viewModel.checkValidity()
         }
-    }
-
-    private fun validEmail(email: String) {
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.emailRegisterLayout.error = "Invalid Email Address"
-            registerValidity.setEmailValidity(false)
-        } else if (!email.matches(Constants.MINONEC.toRegex())) {
-            binding.emailRegisterLayout.error = "Email must contain at least 1 character"
-            registerValidity.setEmailValidity(false)
-        } else {
-            binding.emailRegisterLayout.error = null
-            registerValidity.setEmailValidity(true)
-        }
-
     }
 
     private fun validPasswordRegisterListener() {
-        binding.passwordRegisterEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
-            validPassword(text.toString())
-            checkValidity()
-        }
-    }
+        binding.passwordRegisterEditText.doOnTextChanged { text1: CharSequence?, start: Int, count: Int, after: Int ->
+            viewModel.validPassword(text1.toString())
+            viewModel.checkValidity()
 
-    private fun validPassword(password: String) {
-        if (!password.matches(Constants.MINSIXC.toRegex())) {
-            binding.passwordRegisterLayout.error = "Password must contain at least 6 character"
-            registerValidity.setPasswordValidity(false)
-        } else {
-            binding.passwordRegisterLayout.error = null
-            registerValidity.setPasswordValidity(true)
         }
-
     }
 
     private fun validPasswordRepeatListener() {
         binding.passwordRepeatRegisterEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
-            validRepeatPassword(text.toString())
-            checkValidity()
+            viewModel.validRepeatPassword(text.toString())
+            viewModel.checkValidity()
         }
-    }
-
-    private fun validRepeatPassword(passwordRepeat: String) {
-        if (!(passwordRepeat == binding.passwordRegisterEditText.text.toString())) {
-            binding.passwordRepeatRegisterLayout.error = "Passwords doesn't match"
-            registerValidity.setRepeatPasswordValidity(false)
-        } else {
-            binding.passwordRepeatRegisterLayout.error = null
-            registerValidity.setRepeatPasswordValidity(true)
-        }
-
     }
 
     override fun onDestroyView() {

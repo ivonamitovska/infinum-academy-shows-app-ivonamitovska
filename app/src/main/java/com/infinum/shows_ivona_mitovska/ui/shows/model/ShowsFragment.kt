@@ -21,7 +21,6 @@ import com.infinum.shows_ivona_mitovska.R
 import com.infinum.shows_ivona_mitovska.data.response.generic.ResponseStatus
 import com.infinum.shows_ivona_mitovska.database.ShowApplication
 import com.infinum.shows_ivona_mitovska.database.ShowViewModelFactory
-import com.infinum.shows_ivona_mitovska.database.ShowsDatabase
 import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
@@ -36,8 +35,9 @@ class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
     private val binding get() = _binding!!
     private lateinit var showsAdapter: ShowsAdapter
+    private var topRated: Boolean? = null
     private val viewModel: ShowsViewModel by viewModels {
-        ShowViewModelFactory((activity?.application as ShowApplication).database,requireActivity().application)
+        ShowViewModelFactory((activity?.application as ShowApplication).database, requireActivity().application)
     }
     private lateinit var prefs: ShowPreferences
     private val cameraPhotoLauncher = initCameraLauncher()
@@ -46,7 +46,6 @@ class ShowsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -55,6 +54,7 @@ class ShowsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = ShowPreferences(requireContext())
+
         handleOnBackPress()
         initShowsRecycler()
         initProfilePhoto()
@@ -63,11 +63,16 @@ class ShowsFragment : Fragment() {
         observeTopRatedShows()
         binding.pBarShows.isVisible = true
         val savedState = savedInstanceState?.getBoolean("topRated")
-        if (savedState == null || !savedState) {
-            getShows()
-        } else {
+        if (topRated == true) {
             getTopRated()
+        } else {
+            if (savedState == null || !savedState) {
+                getShows()
+            } else {
+                getTopRated()
+            }
         }
+
     }
 
     private fun observeTopRatedShows() {
@@ -122,8 +127,10 @@ class ShowsFragment : Fragment() {
             binding.pBarShows.isVisible = true
             if (binding.topRatedChip.isChecked) {
                 getTopRated()
+                topRated = true
             } else {
                 getShows()
+                topRated = false
             }
         }
     }
@@ -132,6 +139,8 @@ class ShowsFragment : Fragment() {
         val token = prefs.getToken()
         if (token != null) {
             viewModel.topRated(token)
+
+
         }
     }
 

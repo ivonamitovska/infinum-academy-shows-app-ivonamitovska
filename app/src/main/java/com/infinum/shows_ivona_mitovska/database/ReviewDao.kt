@@ -10,8 +10,8 @@ import com.infinum.shows_ivona_mitovska.model.Show
 
 @Dao
 interface ReviewDao {
-    @Query("SELECT * FROM review")
-    fun getAllReviews(): LiveData<List<Review>>
+    @Query("SELECT * FROM review WHERE showId IS:showId ")
+    fun getAllReviews(showId:String): LiveData<List<Review>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addReview(review:Review)

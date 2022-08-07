@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import com.infinum.shows_ivona_mitovska.database.converter.Converters
 import com.infinum.shows_ivona_mitovska.model.Review
 import com.infinum.shows_ivona_mitovska.model.Show
+import com.infinum.shows_ivona_mitovska.utils.Constants
 
 @Database(
     entities = [Show::class, Review::class],
@@ -25,7 +26,7 @@ abstract class ShowsDatabase : RoomDatabase() {
                 val database = Room.databaseBuilder(
                     context,
                     ShowsDatabase::class.java,
-                    "show_db"
+                    Constants.SHOW_DB
                 )
                     .fallbackToDestructiveMigration()
                     .build()
