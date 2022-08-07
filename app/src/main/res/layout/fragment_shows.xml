@@ -8,36 +8,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarTitle"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_collapseMode="pin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Shows"
-        app:titleTextAppearance="@style/Toolbar.TitleText">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePhotoImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:contentDescription="@string/profile_photo"
-            android:src="@drawable/placeholder"/>
-
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/topRatedChip"
-            style="@style/Colors_Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/top_rated"/>
-
-    </androidx.appcompat.widget.Toolbar>
+<com.infinum.shows_ivona_mitovska.model.ToolbarShowsView
+    android:id="@+id/toolbarShows"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showsRecycler"
@@ -45,7 +21,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:paddingBottom="?attr/actionBarSize"
-        app:layout_constraintTop_toBottomOf="@id/toolbarTitle"
+        app:layout_constraintTop_toBottomOf="@id/toolbarShows"
         tools:listitem="@layout/item_show"/>
 
     <TextView

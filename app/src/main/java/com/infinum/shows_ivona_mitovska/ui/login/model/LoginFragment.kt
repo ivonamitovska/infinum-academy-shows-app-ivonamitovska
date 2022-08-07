@@ -89,7 +89,7 @@ class LoginFragment : Fragment() {
                 saveDefaultImage()
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
             } else {
-                Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
             }
             binding.pBarLogin.isVisible = false
         }
@@ -135,7 +135,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    fun animateShowTriangle()=with(binding.triangle){
+    private fun animateShowTriangle()=with(binding.triangle){
         translationY=-500f
         animate()
             .translationY(0f)
@@ -143,7 +143,7 @@ class LoginFragment : Fragment() {
             .setInterpolator(BounceInterpolator())
             .start()
     }
-    fun animateTitle(){
+    private fun animateTitle(){
         binding.title.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.zoom))
     }
 
