@@ -27,9 +27,9 @@ class ReviewsAdapter(
     override fun getItemCount() = reviews.count()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(shows: List<Review>?) {
-        if (shows != null) {
-            reviews = shows
+    fun updateData(reviewsList: List<Review>?) {
+        if (reviewsList != null) {
+            reviews = reviewsList
             notifyDataSetChanged()
         }
     }

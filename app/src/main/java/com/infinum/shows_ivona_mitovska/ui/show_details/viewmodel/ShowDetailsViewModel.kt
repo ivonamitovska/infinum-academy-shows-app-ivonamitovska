@@ -60,7 +60,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase, app: Application
                 })
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                val reviews = database.reviewDao().getAllReviews()
+                val reviews = database.reviewDao().getAllReviews(showId)
                 withContext(Dispatchers.Main) {
                     reviews.observeForever {
                         _reviews.value = GenericResponse(it, null, ResponseStatus.SUCCESS)

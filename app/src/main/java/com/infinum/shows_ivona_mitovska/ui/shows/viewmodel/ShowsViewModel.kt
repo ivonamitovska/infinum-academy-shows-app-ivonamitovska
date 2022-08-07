@@ -3,13 +3,10 @@ package com.infinum.shows_ivona_mitovska.ui.shows.viewmodel
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.ConnectivityManager.TYPE_ETHERNET
-import android.net.ConnectivityManager.TYPE_MOBILE
-import android.net.ConnectivityManager.TYPE_WIFI
 import android.net.NetworkCapabilities.TRANSPORT_CELLULAR
 import android.net.NetworkCapabilities.TRANSPORT_ETHERNET
 import android.net.NetworkCapabilities.TRANSPORT_WIFI
-import android.os.Build
+import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -42,6 +39,7 @@ class ShowsViewModel(
     private val _showListTopRated = MutableLiveData<GenericResponse<List<Show>?>>()
     val showListTopRated: LiveData<GenericResponse<List<Show>?>>
         get() = _showListTopRated
+
 
     fun initShows(token: Token) {
         if (hasInternetConnection()) {
@@ -78,38 +76,22 @@ class ShowsViewModel(
     }
 
     fun topRated(token: Token) {
-        if(hasInternetConnection()){
-            ApiModule.retrofit.getTopRated(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
-                .enqueue(object : Callback<TopRatedResponse> {
-                    override fun onResponse(call: Call<TopRatedResponse>, response: Response<TopRatedResponse>) {
-                        if (response.isSuccessful) {
-                            _showListTopRated.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
-                            viewModelScope.launch(Dispatchers.IO) {
-                                database.showDao().insertAllShows(response.body()!!.shows)
-                            }
-                        } else {
-                            _showListTopRated.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<TopRatedResponse>, t: Throwable) {
-
-                        _showListTopRated.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
-                    }
-
-                })
-        }
-        else{
-            viewModelScope.launch(Dispatchers.IO) {
-                val showsTopRated = database.showDao().getAllShows()
-                withContext(Dispatchers.Main) {
-                    showsTopRated.observeForever {
-                        _showListTopRated.value = GenericResponse(it, null, ResponseStatus.SUCCESS)
+        ApiModule.retrofit.getTopRated(token.accessToken, token.client, token.tokenType, token.expiry, token.uid)
+            .enqueue(object : Callback<TopRatedResponse> {
+                override fun onResponse(call: Call<TopRatedResponse>, response: Response<TopRatedResponse>) {
+                    if (response.isSuccessful) {
+                        _showListTopRated.value = GenericResponse(response.body()!!.shows, null, ResponseStatus.SUCCESS)
+                    } else {
+                        _showListTopRated.value = GenericResponse(null, response.errorBody().toString(), ResponseStatus.FAILURE)
                     }
                 }
-            }
-        }
 
+                override fun onFailure(call: Call<TopRatedResponse>, t: Throwable) {
+
+                    _showListTopRated.value = GenericResponse(null, t.localizedMessage, ResponseStatus.FAILURE)
+                }
+
+            })
     }
 
     private fun hasInternetConnection(): Boolean {
