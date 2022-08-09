@@ -74,7 +74,6 @@ class ShowDetailsFragment : Fragment() {
     private fun observeShow() {
         viewModel.show.observe(viewLifecycleOwner) { response ->
             if (response.responseStatus == ResponseStatus.SUCCESS) {
-
                 binding.toolbar.title = response.data?.title
                 Glide.with(requireContext()).load(response.data?.imageUrl).into(binding.imageDetails)
                 binding.imageDetails.clipToOutline = true
@@ -141,7 +140,6 @@ class ShowDetailsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 
 }

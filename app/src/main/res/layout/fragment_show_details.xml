@@ -107,11 +107,12 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewRecycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="gone"
                 android:paddingBottom="?attr/actionBarSize"
+                android:layout_marginBottom="20dp"
                 tools:listitem="@layout/item_review"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

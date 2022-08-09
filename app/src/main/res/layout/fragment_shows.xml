@@ -18,9 +18,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showsRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
-        android:paddingBottom="?attr/actionBarSize"
         app:layout_constraintTop_toBottomOf="@id/toolbarShows"
         tools:listitem="@layout/item_show"/>
 

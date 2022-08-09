@@ -63,21 +63,7 @@
     <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/my_purple</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/triangle_splash</item>
-        <item name="android:layout_gravity">center</item>
         <item name="postSplashScreenTheme">@style/Theme.ShowsIvonaMitovska</item>
     </style>
-
-    <style name="DialogStyle" parent="Theme.AppCompat.Dialog">
-        <item name="android:solidColor">@color/white</item>
-        <item name="cornerSizeTopLeft">30dp</item>
-        <item name="cornerSizeTopRight">30dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingBottom">10dp</item>
-    </style>
-
-
-
 
 </resources>

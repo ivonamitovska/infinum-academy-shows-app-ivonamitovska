@@ -10,6 +10,7 @@ import com.infinum.shows_ivona_mitovska.databinding.ActivityMainBinding
 import com.infinum.shows_ivona_mitovska.networking.ApiModule
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.utils.Constants
+import kotlinx.android.synthetic.main.fragment_show_details.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefs: ShowPreferences
@@ -27,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         if (state == null || !state) {
             checkRemembered()
         }
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
     }
 
