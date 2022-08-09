@@ -1,6 +1,7 @@
 package com.infinum.shows_ivona_mitovska.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.infinum.shows_ivona_mitovska.R
@@ -12,6 +13,7 @@ import com.infinum.shows_ivona_mitovska.utils.Constants
 class MainActivity : AppCompatActivity() {
     private lateinit var prefs: ShowPreferences
     private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         if (state == null || !state) {
             checkRemembered()
         }
+
     }
 
     private fun checkRemembered() {

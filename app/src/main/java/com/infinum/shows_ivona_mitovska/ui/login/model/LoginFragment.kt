@@ -2,7 +2,6 @@ package com.infinum.shows_ivona_mitovska.ui.login.model
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,6 +56,16 @@ class LoginFragment : Fragment() {
         validPasswordListener()
         registerButton()
         observeLogin()
+
+        viewModel.getEmailValidLiveData().observe(viewLifecycleOwner) {
+            binding.emailLayout.error = it
+        }
+        viewModel.getPasswordValidLiveData().observe(viewLifecycleOwner) {
+            binding.passwordLayout.error = it
+        }
+        viewModel.getLoginValidityLiveData().observe(viewLifecycleOwner) {
+            binding.loginButton.isEnabled = it
+        }
     }
 
     override fun onResume() {
@@ -72,7 +81,7 @@ class LoginFragment : Fragment() {
                 saveDefaultImage()
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
             } else {
-                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
             }
             binding.pBarLogin.isVisible = false
         }
@@ -106,42 +115,15 @@ class LoginFragment : Fragment() {
 
     private fun validEmailListener() {
         binding.emailEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
-            validEmail(text.toString())
-            checkValidity()
+            viewModel.validEmail(text.toString())
+            viewModel.checkValidity()
         }
     }
 
     private fun validPasswordListener() {
         binding.passwordEditText.doOnTextChanged { text: CharSequence?, start: Int, count: Int, after: Int ->
-            validPassword(text.toString())
-            checkValidity()
-        }
-    }
-
-    private fun checkValidity() {
-        binding.loginButton.isEnabled = loginValidity.isLoginValid()
-    }
-
-    private fun validEmail(email: String) {
-        if (!email.matches(Constants.MINONEC.toRegex())) {
-            binding.emailLayout.error = "Email must contain at least 1 character"
-            loginValidity.setEmailValidity(false)
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.emailLayout.error = "Invalid Email Address"
-            loginValidity.setEmailValidity(false)
-        } else {
-            binding.emailLayout.error = null
-            loginValidity.setEmailValidity(true)
-        }
-    }
-
-    private fun validPassword(password: String) {
-        if (!password.matches(Constants.MINSIXC.toRegex())) {
-            binding.passwordLayout.error = "Password must contain at least 6 character"
-            loginValidity.setPasswordValidity(false)
-        } else {
-            binding.passwordLayout.error = null
-            loginValidity.setPasswordValidity(true)
+            viewModel.validPassword(text.toString())
+            viewModel.checkValidity()
         }
     }
 

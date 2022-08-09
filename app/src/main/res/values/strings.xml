@@ -41,5 +41,6 @@
     <string name="must_login">You must log in!</string>
     <string name="confirm">Confirm</string>
     <string name="quit_app">Do you want to quit app?</string>
+    <string name="fail">fail</string>
 
 </resources>

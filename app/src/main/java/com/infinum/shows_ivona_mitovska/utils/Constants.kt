@@ -15,4 +15,5 @@ object Constants {
     const val TOKEN_TYPE="token-type"
     const val EXPIRY="expiry"
     const val UID="uid"
+    const val SHOW_DB="show_db"
 }
