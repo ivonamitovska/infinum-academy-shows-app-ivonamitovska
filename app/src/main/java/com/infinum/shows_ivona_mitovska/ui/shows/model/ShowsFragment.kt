@@ -25,6 +25,8 @@ import com.infinum.shows_ivona_mitovska.databinding.DialogInfoProfileBinding
 import com.infinum.shows_ivona_mitovska.databinding.FragmentShowsBinding
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showLogOutDialog
 import com.infinum.shows_ivona_mitovska.dialogs.Dialogs.showQuitAppDialog
+import com.infinum.shows_ivona_mitovska.listener.ToolbarListener
+import com.infinum.shows_ivona_mitovska.model.ToolbarShowsView
 import com.infinum.shows_ivona_mitovska.persistence.ShowPreferences
 import com.infinum.shows_ivona_mitovska.ui.shows.adapter.ShowsAdapter
 import com.infinum.shows_ivona_mitovska.ui.shows.viewmodel.ShowsViewModel
@@ -35,7 +37,8 @@ class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
     private val binding get() = _binding!!
     private lateinit var showsAdapter: ShowsAdapter
-    private var topRated: Boolean? = null
+    private var topRated: Boolean = false
+    private lateinit var toolbarView: ToolbarShowsView
     private val viewModel: ShowsViewModel by viewModels {
         ShowViewModelFactory((activity?.application as ShowApplication).database, requireActivity().application)
     }
@@ -48,22 +51,19 @@ class ShowsFragment : Fragment() {
     ): View {
         _binding = FragmentShowsBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = ShowPreferences(requireContext())
-
         handleOnBackPress()
         initShowsRecycler()
-        initProfilePhoto()
-        initChipListener()
         observeShowList()
         observeTopRatedShows()
+        initToolbar()
         binding.pBarShows.isVisible = true
         val savedState = savedInstanceState?.getBoolean("topRated")
-        if (topRated == true) {
+        if (topRated) {
             getTopRated()
         } else {
             if (savedState == null || !savedState) {
@@ -122,25 +122,33 @@ class ShowsFragment : Fragment() {
 
     }
 
-    private fun initChipListener() {
-        binding.topRatedChip.setOnClickListener {
-            binding.pBarShows.isVisible = true
-            if (binding.topRatedChip.isChecked) {
-                getTopRated()
-                topRated = true
-            } else {
-                getShows()
-                topRated = false
+    fun initToolbar() {
+        toolbarView = binding.toolbarShows
+        val listener = object : ToolbarListener {
+            override fun onTopRatedClicked(value: Boolean) {
+                binding.pBarShows.isVisible = true
+                topRated = if (value) {
+                    getTopRated()
+                    true
+                } else {
+                    getShows()
+                    false
+                }
             }
+
+            override fun onProfileClicked() {
+                showProfileInfoDialog()
+            }
+
         }
+        val image = prefs.getImageFromPrefs(Constants.USER_IMAGE)
+        toolbarView.initToolbar(image, listener)
     }
 
     private fun getTopRated() {
         val token = prefs.getToken()
         if (token != null) {
             viewModel.topRated(token)
-
-
         }
     }
 
@@ -153,15 +161,6 @@ class ShowsFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun initProfilePhoto() {
-        binding.profilePhotoImage.apply {
-            setImageBitmap(prefs.getImageFromPrefs(Constants.USER_IMAGE))
-            setOnClickListener {
-                showProfileInfoDialog()
-            }
-        }
     }
 
     private fun showProfileInfoDialog() {
@@ -204,7 +203,7 @@ class ShowsFragment : Fragment() {
     private fun initCameraLauncher() = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.profilePhotoImage.setImageBitmap(imageBitmap)
+            toolbarView.changeProfilePicture(imageBitmap)
             prefs.saveImageToPrefs(Constants.USER_IMAGE, imageBitmap)
         }
     }
@@ -215,7 +214,7 @@ class ShowsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean("topRated", binding.topRatedChip.isChecked)
+        outState.putBoolean("topRated", topRated)
         super.onSaveInstanceState(outState)
     }
 }

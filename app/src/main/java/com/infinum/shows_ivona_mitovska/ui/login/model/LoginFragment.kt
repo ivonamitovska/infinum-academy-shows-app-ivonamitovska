@@ -1,10 +1,16 @@
 package com.infinum.shows_ivona_mitovska.ui.login.model
 
+import android.animation.ValueAnimator
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AnimationUtils
+import android.view.animation.BounceInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -51,6 +57,8 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animateShowTriangle()
+        animateTitle()
         listenOnLogin()
         validEmailListener()
         validPasswordListener()
@@ -81,7 +89,7 @@ class LoginFragment : Fragment() {
                 saveDefaultImage()
                 findNavController().navigate(LoginFragmentDirections.toShowsFragment())
             } else {
-                Toast.makeText(requireContext(), getString(R.string.fail), Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "fail", Toast.LENGTH_LONG).show()
             }
             binding.pBarLogin.isVisible = false
         }
@@ -126,6 +134,20 @@ class LoginFragment : Fragment() {
             viewModel.checkValidity()
         }
     }
+
+    private fun animateShowTriangle()=with(binding.triangle){
+        translationY=-500f
+        animate()
+            .translationY(0f)
+            .setDuration(1000)
+            .setInterpolator(BounceInterpolator())
+            .start()
+    }
+    private fun animateTitle(){
+        binding.title.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.zoom))
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
